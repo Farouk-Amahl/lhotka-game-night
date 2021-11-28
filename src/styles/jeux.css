@@ -1,0 +1,38 @@
+.blocJeu {
+    border: 1px solid #d5dbdb;
+    width: 150px;
+    height: 250px;
+    display: inline-block;
+    margin: 1em;
+    border-radius: 5px;
+    overflow: hidden;
+    background-color: #eef7eb;
+    box-shadow: 1px 1px 5px #c8d2d2;
+    position: relative;
+}
+
+.blocJeuImage {
+    width: 150px;
+    height: 150px;
+    display: flex;
+    overflow: hidden;
+}
+
+.blocJeuImage img {
+    width: 100%;
+}
+
+.blocJeuInfo {
+    padding: .5em;
+}
+
+.blockStats {
+    position: absolute;
+    bottom: 0;
+    padding: .5em 0;
+    width: calc(100% - 1em);
+}
+
+.blockStats span:last-child {
+    float:right;
+}

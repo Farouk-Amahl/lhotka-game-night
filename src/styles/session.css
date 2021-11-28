@@ -1,0 +1,17 @@
+.sessionContainer {
+  margin-top: 9em;
+}
+
+.choixNbrJoueurs {
+    position: fixed;
+    right: 0;
+    margin: 1em;
+    width: 4em;
+}
+
+.choixNbrJoueurs button {
+    width: 4em;
+    height: 4em;
+    margin: .5em 0;
+    font-size: 1em;
+}
