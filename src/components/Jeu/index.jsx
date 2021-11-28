@@ -12,7 +12,7 @@ function Jeu({
   nomUser
 }) {
 function addToSelection() {
-    fetch("http://localhost:8000/selection", {
+    fetch("https://lhotka-game-night.herokuapp.com/selection", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
