@@ -68,16 +68,19 @@ function Session({ user, setUser }) {
         setGames(sauve.filter(jeu => jeu.maxplayers.value === nbrJoueurs))
   }
 
+  function cleanTitle(x) {
+    const titre = x.name[0] ? x.name[0].value : x.name.value
+    let nouvTitre = "";
+    titre.indexOf('The ') === 0 ?  nouvTitre = titre.slice(4) : nouvTitre = titre
+    return nouvTitre
+  }
+
   games &&
     games.sort(function compare(a, b) {
-      if (
-        (a.name[0] ? a.name[0].value : a.name.value) <
-        (b.name[0] ? b.name[0].value : b.name.value)
-      )
+      if (cleanTitle(a) < cleanTitle(b))
         return -1;
       if (
-        (a.name[0] ? a.name[0].value : a.name.value) >
-        (b.name[0] ? b.name[0].value : b.name.value)
+        (cleanTitle(a) > cleanTitle(b))
       )
         return 1;
       return 0;
