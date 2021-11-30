@@ -21,11 +21,11 @@ function Selection({ selection, updateSelection, nomUser }) {
       passage.push(num)
       gamesSelected.push(item)
     }else{
-      if(game.user === nomUser){
-        const rat = gamesSelected.findIndex(jeu => jeu.id === game.jeu)
-        gamesSelected.splice( rat, 1)
-        gamesSelected.push(item)
-      }
+      const rat = gamesSelected.findIndex(jeu => jeu.id === game.jeu)
+      let user = gamesSelected[rat].user
+      item.user = user+', '+game.user
+      gamesSelected.splice( rat, 1)
+      gamesSelected.push(item)
     }
 
     return ''
@@ -42,12 +42,13 @@ function Selection({ selection, updateSelection, nomUser }) {
       {selection &&
         gamesSelected.map(jeu => (
           <div className="blocSelection" key={jeu.id}>
-            <div className={ `blocSelectionImage ${ jeu.user === nomUser && 'select' }` }>
+            <div className={ `blocSelectionImage ${ jeu.user.indexOf(nomUser) !== -1 && 'select' }` }>
               <img src={jeu.img} alt={jeu.jeu} />
             </div>
             <span className="blocSelectionCompte">
               {jeu.nbrChoise}
             </span>
+            <span  className="blocSelectionVoters">{ jeu.user }</span>
           </div>
         ))}
     </div>

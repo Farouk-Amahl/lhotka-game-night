@@ -14,10 +14,10 @@
     display: inline-block;
     margin: 1em;
     border-radius: 5px;
-    overflow: hidden;
     background-color: #eef7eb;
     box-shadow: 1px 1px 5px #c8d2d2;
     position: relative;
+    overflow: hidden;
 }
 
 .blocSelectionImage {
@@ -49,4 +49,16 @@
     vertical-align: middle;
     line-height: 25px;
     border-radius: 5px;
+}
+
+.blocSelectionVoters {
+    position: absolute;
+    top: 0;
+    padding: .5em;
+    background-color: aliceblue;
+    display: none;
+}
+
+.blocSelection:hover .blocSelectionVoters {
+    display: flex;
 }
