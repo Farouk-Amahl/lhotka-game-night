@@ -121,3 +121,38 @@ h1 {
     transform: rotate(360deg);
   }
 }
+
+@media only screen and (max-width: 600px) {
+  body {
+
+  }
+
+	.blocSelection {
+    border: 1px solid #d5dbdb;
+    width: calc(20vw - .53em);
+    height: calc(20vw - .53em);
+    margin: .2em;
+	}
+
+	.blocSelectionImage {
+    width: 100%;
+    height: 100%;
+	}
+
+	.loginBtn {
+		opacity: .4;
+	}
+
+	.blocJeu {
+    width: calc(50vw - 2.15em);
+	}
+
+	.blocJeuImage {
+    width: calc(50vw - 2.15em);
+	}
+
+	.sessionContainer {
+    margin-top: 10.5em;
+	}
+
+}
