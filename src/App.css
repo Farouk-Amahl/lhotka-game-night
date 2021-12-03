@@ -155,4 +155,8 @@ h1 {
     margin-top: 10.5em;
 	}
 
+	.choixNbrJoueurs {
+    display: none;
+	}
+
 }

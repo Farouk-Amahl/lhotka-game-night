@@ -46,6 +46,17 @@ function Session({ user, setUser }) {
 
   useEffect(() => {
     async function fetchCollection() {
+      const { data } = await bggXmlApiClient.get("collection", {
+        username: "Scrobs"
+      });
+      userListJeux.current = userListJeux.current.concat(data.item);
+      setJeux(userListJeux.current);
+    }
+    fetchCollection();
+  }, []);
+
+  useEffect(() => {
+    async function fetchCollection() {
       const listeThings = jeuxList
         .map(jeu => {
           return jeu.objectid;
