@@ -13,6 +13,7 @@ function Jeu({
 }) {
 function addToSelection() {
     fetch("https://lhotka-game-night.herokuapp.com/selection", {
+    // fetch("http://localhost:8000/selection", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -29,7 +30,7 @@ function addToSelection() {
   }
 
   return (
-    <div className="blocJeu" onClick={() => addToSelection()}>
+    <div className={`blocJeu ${ selection.find( game => game.jeu === idJeu && game.user === nomUser) ? 'selected' : '' }`} onClick={() => addToSelection()}  >
       <div className="blocJeuImage">
         <img src={photo} alt={titre} />
       </div>

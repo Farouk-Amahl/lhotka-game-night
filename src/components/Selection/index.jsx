@@ -37,11 +37,24 @@ function Selection({ selection, updateSelection, nomUser }) {
     return 0;
   });
 
+  function addToSelection(idJeu, photo) {
+      fetch("https://lhotka-game-night.herokuapp.com/selection", {
+      // fetch("http://localhost:8000/selection", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ nomUser, idJeu, photo })
+      })
+      .then(res => {return res.json();})
+      .then(data => {updateSelection(data);})
+    }
+
   return (
     <div className="selection">
       {selection &&
         gamesSelected.map(jeu => (
-          <div className="blocSelection" key={jeu.id}>
+          <div className="blocSelection" key={jeu.id} onClick={() => addToSelection(jeu.id, jeu.img)}>
             <div className={ `blocSelectionImage ${ jeu.user.indexOf(nomUser) !== -1 && 'select' }` }>
               <img src={jeu.img} alt={jeu.jeu} />
             </div>

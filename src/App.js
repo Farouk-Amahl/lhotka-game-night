@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import Session from "./pages/Session";
 import Presentation from "./pages/Presentation";
 import Login from "./pages/Login";
+import SignUp from "./pages/SignUp";
 import LoginBtn from "./components/LoginBtn";
 import useToken from './components/useToken';
 import './App.css';
@@ -25,6 +26,9 @@ function App() {
           </Route>
           <Route path="/presentation" >
             <Presentation />
+          </Route>
+          <Route path="/trucBidule" >
+            <SignUp />
           </Route>
           <Route exact path="/">
             <Home />

@@ -9,6 +9,13 @@
     background-color: #eef7eb;
     box-shadow: 1px 1px 5px #c8d2d2;
     position: relative;
+    cursor: pointer;
+    user-select: none;
+}
+
+.blocJeu.selected {
+    filter: grayscale();
+    opacity: .7;
 }
 
 .blocJeuImage {
