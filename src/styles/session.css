@@ -1,5 +1,6 @@
 .sessionContainer {
-  margin-top: 9em;
+  /*margin-top: 9em;*/
+  overflow: auto;
 }
 
 .choixNbrJoueurs {

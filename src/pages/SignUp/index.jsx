@@ -1,22 +1,20 @@
 import "../../styles/login.css";
 import { useState } from "react";
 
-function SignUp({ setToken, user, setUser }) {
-  const [username, setUserName] = useState();
+function SignUp() {
+  const [name, setUserName] = useState();
   const [password, setPassword] = useState();
 
   const handleSubmit = async e => {
     e.preventDefault();
-    const userData = await loginUser({
-      username,
+    await signinUser({
+      name,
       password
     });
-    setToken(userData.token);
-    sessionStorage.setItem('userName', userData.user.name);
   }
 
-  async function loginUser(credentials) {
-    return fetch("https://lhotka-game-night.herokuapp.com/login", {
+  async function signinUser(credentials) {
+    return fetch("http://localhost:8000/api/auth/signup", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

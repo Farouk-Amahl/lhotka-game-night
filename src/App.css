@@ -51,7 +51,8 @@ table {
 @import url('https://fonts.googleapis.com/css2?family=Flavors&display=swap');
 
 body {
-  font-family: 'Flavors';
+  font-family: 'Roboto';
+	height: 100%;
 }
 
 a {
@@ -65,9 +66,11 @@ h1 {
 
 .container {
     background-image: url('./assets/unnamed.jpg');
-    min-height: 100vh;
     background-size: 100%;
     background-attachment: fixed;
+		display: flex;
+		flex-flow: column;
+		height: 100vh;
 }
 
 .divHome {
@@ -152,7 +155,7 @@ h1 {
 	}
 
 	.sessionContainer {
-    margin-top: 10.5em;
+    /*margin-top: 10.5em;*/
 	}
 
 	.choixNbrJoueurs {

@@ -100,8 +100,8 @@ function Session({ user, setUser }) {
   // games && console.log(games);
 
   return (
-    <div>
-      <div>
+    <>
+      <div className="selectionContainer">
         <Selection
           selection={selection}
           updateSelection={updateSelection}
@@ -109,7 +109,7 @@ function Session({ user, setUser }) {
         />
       </div>
       <div className="sessionContainer">
-        <div>
+        <div className="sessionInner">
           <div className="choixNbrJoueurs">
             <button onClick={() => triParJoueurs("all")}>all</button>
             <button onClick={() => triParJoueurs("2")}>2</button>
@@ -136,7 +136,7 @@ function Session({ user, setUser }) {
             )}
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

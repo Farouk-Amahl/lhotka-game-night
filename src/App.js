@@ -13,7 +13,7 @@ function App() {
   const { token, setToken } = useToken();
   const { user, setUser } = useState({});
 
-  console.log(token);
+  token && console.log('token:' + token);
 
   return (
     <React.StrictMode>
@@ -22,7 +22,7 @@ function App() {
         <LoginBtn />
         <Switch>
           <Route path="/session" >
-            { !sessionStorage.getItem('token') ? <Login setToken={setToken} user={user} setUser={setUser} /> : <Session user={user} setUser={setUser} /> }
+            { !token ? <Login setToken={setToken} user={user} setUser={setUser} /> : <Session user={user} setUser={setUser} /> }
           </Route>
           <Route path="/presentation" >
             <Presentation />

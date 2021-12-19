@@ -30,7 +30,7 @@ function addToSelection() {
   }
 
   return (
-    <div className={`blocJeu ${ selection.find( game => game.jeu === idJeu && game.user === nomUser) ? 'selected' : '' }`} onClick={() => addToSelection()}  >
+    <div className={`blocJeu ${ selection && selection.find( game => game.jeu === idJeu && game.user === nomUser) ? 'selected' : '' }`} onClick={() => addToSelection()}  >
       <div className="blocJeuImage">
         <img src={photo} alt={titre} />
       </div>

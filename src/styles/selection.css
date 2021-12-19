@@ -1,6 +1,10 @@
+.selectionContainer {
+  flex: 0 1 auto;
+}
+
 .selection {
     border-bottom: 6px solid #d5dbdb;
-    position: fixed;
+    /*position: fixed;*/
     width: 100%;
     background-color: #eef7eb;
     top: 0;
