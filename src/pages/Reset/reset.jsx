@@ -1,44 +1,35 @@
 import "../../styles/login.css";
 import { useState } from "react";
 
-function Login({ setToken, user, setUser }) {
+function Reset() {
   const [name, setUserName] = useState();
   const [password, setPassword] = useState();
-  const [errors, setErrors] = useState();
+  const [newPassword, setNewPassword] = useState();
 
   const handleSubmit = async e => {
     e.preventDefault();
-    const userData = await loginUser({
+    await resetPass({
       name,
-      password
+      password,
+      newPassword
     });
-    if(userData.error){
-      setErrors(userData.error)
-    }else{
-      setToken(userData.token);
-      sessionStorage.setItem('userName', userData.user);
-    }
   }
 
-  async function loginUser(credentials) {
-    // return fetch("https://lhotka-game-night.herokuapp.com/login", {
-      return fetch("https://lhotka-game-night.herokuapp.com/api/auth/login", {
-    // return fetch("http://localhost:8000/api/auth/login", {
+  async function resetPass(credentials) {
+    return fetch("http://localhost:8000/api/auth/reset", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify(credentials)
-    })
-    .then(data => data.json())
+    }).then(data => data.json());
   }
 
   return (
     <div className="login-wrapper">
-      <h1>Who am I ?</h1>
+      <h1>La grande Porte</h1>
 
       <form  onSubmit={handleSubmit}>
-        <p>{errors && `${ errors }`}</p>
         <label>
           <p>Username</p>
           <input type="text" onChange={e => setUserName(e.target.value)} />
@@ -46,6 +37,10 @@ function Login({ setToken, user, setUser }) {
         <label>
           <p>Password</p>
           <input type="password" onChange={e => setPassword(e.target.value)} />
+        </label>
+        <label>
+          <p>New Password</p>
+          <input type="password" onChange={e => setNewPassword(e.target.value)} />
         </label>
         <div>
           <button type="submit">Submit</button>
@@ -55,4 +50,4 @@ function Login({ setToken, user, setUser }) {
   );
 }
 
-export default Login;
+export default Reset;

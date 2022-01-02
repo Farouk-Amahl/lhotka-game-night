@@ -5,6 +5,7 @@ import Session from "./pages/Session";
 import Presentation from "./pages/Presentation";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
+import Reset from "./pages/Reset/reset";
 import LoginBtn from "./components/LoginBtn";
 import useToken from './components/useToken';
 import './App.css';
@@ -29,6 +30,9 @@ function App() {
           </Route>
           <Route path="/trucBidule" >
             <SignUp />
+          </Route>
+          <Route path="/trucChose" >
+            <Reset />
           </Route>
           <Route exact path="/">
             <Home />

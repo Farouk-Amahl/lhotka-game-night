@@ -11,6 +11,7 @@ function Session({ user, setUser }) {
   const [sauve, setSauve] = useState([]);
   const nomUser = sessionStorage.getItem("userName");
   const [selection, updateSelection] = useState(null);
+  const [gamesNoDuplicate, setGamesNoDuplicate] = useState(null);
 
   useEffect(() => {
     fetch(`https://lhotka-game-night.herokuapp.com/listeselection`)
@@ -70,34 +71,35 @@ function Session({ user, setUser }) {
   }, [jeuxList]);
 
   function triParJoueurs(nbrJoueurs) {
-    nbrJoueurs === "all" ?
-      setGames(sauve.filter(jeu => jeu.maxplayers.value !== nbrJoueurs))
-      :
-      nbrJoueurs === "6" ?
-        setGames(sauve.filter(jeu => parseInt(jeu.maxplayers.value) > 5))
-      :
-        setGames(sauve.filter(jeu => jeu.maxplayers.value === nbrJoueurs))
+    nbrJoueurs === "all"
+      ? setGames(sauve.filter(jeu => jeu.maxplayers.value !== nbrJoueurs))
+      : nbrJoueurs === "6"
+      ? setGames(sauve.filter(jeu => parseInt(jeu.maxplayers.value) > 5))
+      : setGames(sauve.filter(jeu => jeu.maxplayers.value === nbrJoueurs));
   }
 
   function cleanTitle(x) {
-    const titre = x.name[0] ? x.name[0].value : x.name.value
+    const titre = x.name[0] ? x.name[0].value : x.name.value;
     let nouvTitre = "";
-    titre.indexOf('The ') === 0 ?  nouvTitre = titre.slice(4) : nouvTitre = titre
-    return nouvTitre
+    titre.indexOf("The ") === 0
+      ? (nouvTitre = titre.slice(4))
+      : (nouvTitre = titre);
+    return nouvTitre;
   }
 
   games &&
-    games.sort(function compare(a, b) {
-      if (cleanTitle(a) < cleanTitle(b))
-        return -1;
-      if (
-        (cleanTitle(a) > cleanTitle(b))
-      )
-        return 1;
-      return 0;
-    });
+    games
+      .sort(function compare(a, b) {
+        if (cleanTitle(a) < cleanTitle(b)) return -1;
+        if (cleanTitle(a) > cleanTitle(b)) return 1;
+        return 0;
+      });
 
-  // games && console.log(games);
+  useEffect(() => {
+    var uniq = games && [...new Map(games.map(item => [item["id"], item])).values()];
+    setGamesNoDuplicate(uniq);
+  }, [games]);
+
 
   return (
     <>
@@ -117,23 +119,19 @@ function Session({ user, setUser }) {
             <button onClick={() => triParJoueurs("5")}>5</button>
             <button onClick={() => triParJoueurs("6")}>6+</button>
           </div>
-          {games &&
-            games.map(
-              (jeu, index) => (
-                // jeu.name.find(truc => truc.type === "primary").value.indexOf("Expansion") === -1 && (
-                <Jeu
-                  key={jeu.id}
-                  titre={jeu.name[0] ? jeu.name[0].value : jeu.name.value}
-                  idJeu={jeu.id}
-                  photo={jeu.thumbnail}
-                  jeu={jeu}
-                  selection={selection}
-                  updateSelection={updateSelection}
-                  nomUser={nomUser}
-                />
-              )
-              // )
-            )}
+          {gamesNoDuplicate &&
+            gamesNoDuplicate.map((game, index) => (
+              <Jeu
+                key={game.id}
+                titre={game.name[0] ? game.name[0].value : game.name.value}
+                idJeu={game.id}
+                photo={game.thumbnail}
+                jeu={game}
+                selection={selection}
+                updateSelection={updateSelection}
+                nomUser={nomUser}
+              />
+            ))}
         </div>
       </div>
     </>
