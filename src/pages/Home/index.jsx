@@ -4,7 +4,6 @@ function Home() {
   return (
     <div className="divHome">
       <Link to="/pres">
-        <h1>Lhotka Game Night</h1>
       </Link>
     </div>
   );
