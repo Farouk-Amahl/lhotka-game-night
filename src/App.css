@@ -66,8 +66,9 @@ h1 {
 
 .container {
     background-image: url('./assets/fond.png');
-    background-size: 100%;
+    background-size: auto 100%;
     background-attachment: fixed;
+		background-position: center;
 		display: flex;
 		flex-flow: column;
 		height: 100vh;

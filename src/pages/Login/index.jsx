@@ -40,16 +40,12 @@ function Login({ setToken, user, setUser }) {
       <form  onSubmit={handleSubmit}>
         <p>{errors && `${ errors }`}</p>
         <label>
-          <p>Username</p>
-          <input type="text" onChange={e => setUserName(e.target.value)} />
+          <input type="text" onChange={e => setUserName(e.target.value)} placeHolder="username"/>
         </label>
         <label>
-          <p>Password</p>
-          <input type="password" onChange={e => setPassword(e.target.value)} />
+          <input type="password" onChange={e => setPassword(e.target.value)} placeHolder="password" />
         </label>
-        <div>
-          <button type="submit">Submit</button>
-        </div>
+        <button type="submit">Submit</button>
       </form>
     </div>
   );

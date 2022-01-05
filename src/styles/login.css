@@ -3,4 +3,27 @@
     flex-direction: column;
     align-items: center;
     color: #fff;
+    margin: auto;
+    background: #835191;
+    border-radius: 5px;
+    padding: 1em;
+}
+
+.login-wrapper h1 {
+  font-size: 2em;
+}
+
+.login-wrapper form input {
+  padding: 1em;
+  margin: 1em 0;
+  display: block;
+  border-radius: 5px;
+}
+
+.login-wrapper form button[type="submit"] {
+  padding: 1em;
+  margin: 1em auto;
+  border-radius: 5px;
+  width: 100%;
+  background: #c09cca;
 }
