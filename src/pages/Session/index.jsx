@@ -82,6 +82,9 @@ function Session({ user, setUser }) {
     titre.indexOf("The ") === 0
       ? (nouvTitre = titre.slice(4))
       : (nouvTitre = titre);
+    titre.indexOf("A ") === 0
+      ? (nouvTitre = titre.slice(2))
+      : (nouvTitre = titre);
     return nouvTitre;
   }
 
