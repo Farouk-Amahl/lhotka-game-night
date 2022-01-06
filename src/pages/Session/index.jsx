@@ -1,6 +1,7 @@
 import Jeu from "../../components/Jeu";
 import { useState, useEffect, useRef } from "react";
 import Selection from "../../components/Selection";
+import Options from "../../components/Options";
 import "../../styles/session.css";
 import bggXmlApiClient from "bgg-xml-api-client";
 
@@ -70,12 +71,9 @@ function Session({ user, setUser }) {
     fetchCollection();
   }, [jeuxList]);
 
-  function triParJoueurs(nbrJoueurs) {
-    nbrJoueurs === "all"
-      ? setGames(sauve.filter(jeu => jeu.maxplayers.value !== nbrJoueurs))
-      : nbrJoueurs === "6"
-      ? setGames(sauve.filter(jeu => parseInt(jeu.maxplayers.value) > 5))
-      : setGames(sauve.filter(jeu => jeu.maxplayers.value === nbrJoueurs));
+  function sortByNbrPlayers(nbrPlayers) {
+    console.log(nbrPlayers);
+      setGames(sauve.filter(jeu => parseInt(jeu.maxplayers.value) > nbrPlayers))
   }
 
   function cleanTitle(x) {
@@ -112,13 +110,7 @@ function Session({ user, setUser }) {
       </div>
       <div className="sessionContainer">
         <div className="sessionInner">
-          <div className="choixNbrJoueurs">
-            <button onClick={() => triParJoueurs("all")}>all</button>
-            <button onClick={() => triParJoueurs("2")}>2</button>
-            <button onClick={() => triParJoueurs("4")}>4</button>
-            <button onClick={() => triParJoueurs("5")}>5</button>
-            <button onClick={() => triParJoueurs("6")}>6+</button>
-          </div>
+          <Options label="Sorting" sortByNbrPlayers={sortByNbrPlayers} />
           {gamesNoDuplicate &&
             gamesNoDuplicate.map((game, index) => (
               <Jeu
