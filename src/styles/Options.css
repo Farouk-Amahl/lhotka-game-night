@@ -1,15 +1,12 @@
 .optionWrapper {
   position: absolute;
-  right: .5em;
+  right: 0;
   z-index: 500;
   text-align: right;
 }
 
 .optionWrapper:hover .Options {
-  height: auto;
-  padding: 1em;
-  border-bottom: 6px solid #d5dbdb;
-  border-left: 6px solid #d5dbdb;
+  max-height: 500px;
 }
 
 .optionLabel {
@@ -19,15 +16,27 @@
   border-radius: 0px 0px 5px 15px;
 }
 
-.Options {
+.optionInner {
   background: #eef7eb;
   border-radius: 0px 0px 0px 15px;
+  padding: 1em;
+  border-bottom: 6px solid #d5dbdb;
+  border-left: 6px solid #d5dbdb;
+  vertical-align: baseline;
+  display: inline-block;
+}
+
+.Options {
   overflow: hidden;
-  height: 0;
+  max-height: 0;
   transition: all .5s ease 0s;
 }
 
-.Options span {
-  display: block;
-  letter-spacing: .85em;
+.Options .range{
+
+}
+
+.Options .range span {
+  display: inline-flex;
+  width: calc(100% / 7.5);
 }
