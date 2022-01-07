@@ -1,0 +1,8 @@
+.sotingTool .range{
+
+}
+
+.sotingTool .range span {
+  display: inline-flex;
+  width: calc(100% / 7.5);
+}

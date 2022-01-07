@@ -29,14 +29,5 @@
 .Options {
   overflow: hidden;
   max-height: 0;
-  transition: all .5s ease 0s;
-}
-
-.Options .range{
-
-}
-
-.Options .range span {
-  display: inline-flex;
-  width: calc(100% / 7.5);
+  transition: all 1s ease 0s;
 }

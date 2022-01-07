@@ -2,6 +2,7 @@ import Jeu from "../../components/Jeu";
 import { useState, useEffect, useRef } from "react";
 import Selection from "../../components/Selection";
 import Options from "../../components/Options";
+import SortingTool from "../../components/SortingTool";
 import "../../styles/session.css";
 import bggXmlApiClient from "bgg-xml-api-client";
 
@@ -71,9 +72,16 @@ function Session({ user, setUser }) {
     fetchCollection();
   }, [jeuxList]);
 
-  function sortByNbrPlayers(nbrPlayers) {
-    console.log(nbrPlayers);
-      setGames(sauve.filter(jeu => parseInt(jeu.maxplayers.value) > nbrPlayers))
+  function sortByNbrPlayers(nbrPlayersMin, nbrPlayersMax) {
+    setGames(
+      sauve.filter(
+        jeu =>
+          parseInt(jeu.minplayers.value) >= nbrPlayersMin &&
+          (nbrPlayersMax > 6
+            ? parseInt(jeu.maxplayers.value) > 6
+            : parseInt(jeu.maxplayers.value) <= nbrPlayersMax)
+      )
+    );
   }
 
   function cleanTitle(x) {
@@ -89,18 +97,18 @@ function Session({ user, setUser }) {
   }
 
   games &&
-    games
-      .sort(function compare(a, b) {
-        if (cleanTitle(a) < cleanTitle(b)) return -1;
-        if (cleanTitle(a) > cleanTitle(b)) return 1;
-        return 0;
-      });
+    games.sort(function compare(a, b) {
+      if (cleanTitle(a) < cleanTitle(b)) return -1;
+      if (cleanTitle(a) > cleanTitle(b)) return 1;
+      return 0;
+    });
 
   useEffect(() => {
-    var uniq = games && [...new Map(games.map(item => [item["id"], item])).values()];
+    var uniq = games && [
+      ...new Map(games.map(item => [item["id"], item])).values()
+    ];
     setGamesNoDuplicate(uniq);
   }, [games]);
-
 
   return (
     <>
@@ -113,7 +121,7 @@ function Session({ user, setUser }) {
       </div>
       <div className="sessionContainer">
         <div className="sessionInner">
-          <Options label="Sorting" sortByNbrPlayers={sortByNbrPlayers} />
+          <Options label="Sorting" Content={SortingTool} contentAction={sortByNbrPlayers} />
           {gamesNoDuplicate &&
             gamesNoDuplicate.map((game, index) => (
               <Jeu
