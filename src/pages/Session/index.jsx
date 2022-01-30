@@ -4,7 +4,7 @@ import Selection from "../../components/Selection";
 import Options from "../../components/Options";
 import SortingTool from "../../components/SortingTool";
 import "../../styles/session.css";
-import bggXmlApiClient from "bgg-xml-api-client";
+import convert from 'xml-js';
 
 function Session({ user, setUser }) {
   const [jeuxList, setJeux] = useState([]);
@@ -26,6 +26,40 @@ function Session({ user, setUser }) {
   }, []);
 
   useEffect(() => {
+    fetch(`https://api.geekdo.com/xmlapi2/collection?username=mcxii`)
+      .then( response => response.text())
+      .then(data => {
+        var gamesJson = convert.xml2js(data, {compact: true, spaces: 4});
+        userListJeux.current = userListJeux.current.concat(gamesJson.items.item);
+        setJeux(userListJeux.current);
+        // console.log(gamesJson.items.item);
+        //setJeux(gamesJson.items.item);
+      });
+  }, []);
+
+  useEffect(() => {
+    fetch(`https://api.geekdo.com/xmlapi2/collection?username=Scrobs`)
+      .then( response => response.text())
+      .then(data => {
+        var gamesJson = convert.xml2js(data, {compact: true, spaces: 4});
+        userListJeux.current = userListJeux.current.concat(gamesJson.items.item);
+        setJeux(userListJeux.current);
+        // console.log(gamesJson.items.item);
+        //setJeux(gamesJson.items.item);
+      });
+  }, []);
+
+  useEffect(() => {
+    fetch(`https://api.geekdo.com/xmlapi2/collection?username=Ruhtro`)
+      .then( response => response.text())
+      .then(data => {
+        var gamesJson = convert.xml2js(data, {compact: true, spaces: 4});
+        userListJeux.current = userListJeux.current.concat(gamesJson.items.item);
+        setJeux(userListJeux.current);
+      });
+  }, []);
+
+  /*useEffect(() => {
     async function fetchCollection() {
       const { data } = await bggXmlApiClient.get("collection", {
         username: "mcxii"
@@ -71,21 +105,38 @@ function Session({ user, setUser }) {
     }
     fetchCollection();
   }, [jeuxList]);
+*/
+  useEffect(() => {
+      const listeThings = jeuxList
+        .map(gameId => {
+          return gameId._attributes.objectid;
+        })
+        .join();
+        fetch(`https://api.geekdo.com/xmlapi2/thing?id=` + listeThings)
+          .then( response => response.text())
+          .then(data => {
+            var listGamesJson = JSON.parse(convert.xml2json(data, {compact: true, spaces: 4}));
+            console.log(listGamesJson.items.item);
+            setGames(listGamesJson.items.item);
+            setSauve(listGamesJson.items.item);
+          });
+  }, [jeuxList]);
 
   function sortByNbrPlayers(nbrPlayersMin, nbrPlayersMax) {
     setGames(
       sauve.filter(
         jeu =>
-          parseInt(jeu.minplayers.value) >= nbrPlayersMin &&
+          parseInt(jeu.minplayers._attributes.value) >= nbrPlayersMin &&
           (nbrPlayersMax > 6
-            ? parseInt(jeu.maxplayers.value) > 6
-            : parseInt(jeu.maxplayers.value) <= nbrPlayersMax)
+            ? parseInt(jeu.maxplayers._attributes.value) > 6
+            : parseInt(jeu.maxplayers._attributes.value) <= nbrPlayersMax)
       )
+
     );
   }
 
   function cleanTitle(x) {
-    const titre = x.name[0] ? x.name[0].value : x.name.value;
+    const titre = x.name[0] ? x.name[0]._attributes.value : x.name._attributes.value;
     let nouvTitre = "";
     titre.indexOf("The ") === 0
       ? (nouvTitre = titre.slice(4))
@@ -105,7 +156,7 @@ function Session({ user, setUser }) {
 
   useEffect(() => {
     var uniq = games && [
-      ...new Map(games.map(item => [item["id"], item])).values()
+      ...new Map(games.map(item => [item._attributes["id"], item])).values()
     ];
     setGamesNoDuplicate(uniq);
   }, [games]);
@@ -125,10 +176,10 @@ function Session({ user, setUser }) {
           {gamesNoDuplicate &&
             gamesNoDuplicate.map((game, index) => (
               <Jeu
-                key={game.id}
-                titre={game.name[0] ? game.name[0].value : game.name.value}
-                idJeu={game.id}
-                photo={game.thumbnail}
+                key={game._attributes.id}
+                titre={game.name[0] ? game.name[0]._attributes.value : game.name._attributes.value}
+                idJeu={game._attributes.id}
+                photo={game.thumbnail._text}
                 jeu={game}
                 selection={selection}
                 updateSelection={updateSelection}
