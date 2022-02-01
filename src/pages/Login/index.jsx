@@ -1,5 +1,6 @@
 import "../../styles/login.css";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 function Login({ setToken, user, setUser }) {
   const [name, setUserName] = useState();
@@ -47,6 +48,7 @@ function Login({ setToken, user, setUser }) {
         </label>
         <button type="submit">Submit</button>
       </form>
+      <Link to="/visit">simple visit</Link>
     </div>
   );
 }

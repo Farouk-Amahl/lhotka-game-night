@@ -1,9 +1,11 @@
 import "../../styles/selection.css";
+import { useLocation } from "react-router-dom";
 
 function Selection({ selection, updateSelection, nomUser }) {
   /*const selectionDeJeux = selection && [
     ...new Map(selection.map(item => [item["jeu"], item])).values()
   ];*/
+  const visit = useLocation().pathname === '/visit' ? true : false;
 
   const gamesSelected = [];
   const passage = []
@@ -38,6 +40,7 @@ function Selection({ selection, updateSelection, nomUser }) {
   });
 
   function addToSelection(idJeu, photo) {
+    !visit &&
       fetch("https://lhotka-game-night.herokuapp.com/selection", {
       // fetch("http://localhost:8000/selection", {
         method: "POST",

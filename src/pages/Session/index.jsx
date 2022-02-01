@@ -32,8 +32,6 @@ function Session({ user, setUser }) {
         var gamesJson = convert.xml2js(data, {compact: true, spaces: 4});
         userListJeux.current = userListJeux.current.concat(gamesJson.items.item);
         setJeux(userListJeux.current);
-        // console.log(gamesJson.items.item);
-        //setJeux(gamesJson.items.item);
       });
   }, []);
 
@@ -44,8 +42,6 @@ function Session({ user, setUser }) {
         var gamesJson = convert.xml2js(data, {compact: true, spaces: 4});
         userListJeux.current = userListJeux.current.concat(gamesJson.items.item);
         setJeux(userListJeux.current);
-        // console.log(gamesJson.items.item);
-        //setJeux(gamesJson.items.item);
       });
   }, []);
 
@@ -59,53 +55,6 @@ function Session({ user, setUser }) {
       });
   }, []);
 
-  /*useEffect(() => {
-    async function fetchCollection() {
-      const { data } = await bggXmlApiClient.get("collection", {
-        username: "mcxii"
-      });
-      userListJeux.current = userListJeux.current.concat(data.item);
-      setJeux(userListJeux.current);
-    }
-    fetchCollection();
-  }, []);
-
-  useEffect(() => {
-    async function fetchCollection() {
-      const { data } = await bggXmlApiClient.get("collection", {
-        username: "Ruhtro"
-      });
-      userListJeux.current = userListJeux.current.concat(data.item);
-      setJeux(userListJeux.current);
-    }
-    fetchCollection();
-  }, []);
-
-  useEffect(() => {
-    async function fetchCollection() {
-      const { data } = await bggXmlApiClient.get("collection", {
-        username: "Scrobs"
-      });
-      userListJeux.current = userListJeux.current.concat(data.item);
-      setJeux(userListJeux.current);
-    }
-    fetchCollection();
-  }, []);
-
-  useEffect(() => {
-    async function fetchCollection() {
-      const listeThings = jeuxList
-        .map(jeu => {
-          return jeu.objectid;
-        })
-        .join();
-      const { data } = await bggXmlApiClient.get("thing", { id: listeThings });
-      setGames(data.item);
-      setSauve(data.item);
-    }
-    fetchCollection();
-  }, [jeuxList]);
-*/
   useEffect(() => {
       const listeThings = jeuxList
         .map(gameId => {
@@ -116,7 +65,6 @@ function Session({ user, setUser }) {
           .then( response => response.text())
           .then(data => {
             var listGamesJson = JSON.parse(convert.xml2json(data, {compact: true, spaces: 4}));
-            console.log(listGamesJson.items.item);
             setGames(listGamesJson.items.item);
             setSauve(listGamesJson.items.item);
           });
@@ -140,10 +88,9 @@ function Session({ user, setUser }) {
     let nouvTitre = "";
     titre.indexOf("The ") === 0
       ? (nouvTitre = titre.slice(4))
-      : (nouvTitre = titre);
-    titre.indexOf("A ") === 0
-      ? (nouvTitre = titre.slice(2))
-      : (nouvTitre = titre);
+      : titre.indexOf("A ") === 0
+        ? (nouvTitre = titre.slice(2))
+        : (nouvTitre = titre);
     return nouvTitre;
   }
 

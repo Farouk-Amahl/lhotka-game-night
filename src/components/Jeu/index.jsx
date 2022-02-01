@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import "../../styles/jeux.css";
 import States from "../States";
+import { useLocation } from "react-router-dom";
 
 function Jeu({
   titre,
@@ -11,7 +12,11 @@ function Jeu({
   updateSelection,
   nomUser
 }) {
+
+  const visit = useLocation().pathname === '/visit' ? true : false;
+
 function addToSelection() {
+  !visit &&
     fetch("https://lhotka-game-night.herokuapp.com/selection", {
     // fetch("http://localhost:8000/selection", {
       method: "POST",

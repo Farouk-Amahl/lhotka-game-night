@@ -22,6 +22,9 @@ function App() {
       <Router>
         <LoginBtn />
         <Switch>
+          <Route path="/visit" >
+            <Session user="visitor" setUser={setUser} />
+          </Route>
           <Route path="/session" >
             { !token ? <Login setToken={setToken} user={user} setUser={setUser} /> : <Session user={user} setUser={setUser} /> }
           </Route>
