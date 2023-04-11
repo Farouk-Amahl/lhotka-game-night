@@ -77,10 +77,10 @@ function Session({ user, setUser }) {
           parseInt(jeu.minplayers._attributes.value) >= nbrPlayersMin &&
           (nbrPlayersMax > 6
             ? parseInt(jeu.maxplayers._attributes.value) > 6
-            : parseInt(jeu.maxplayers._attributes.value) <= nbrPlayersMax)
-      )
+            : parseInt(jeu.maxplayers._attributes.value) >= nbrPlayersMax)
 
-    );
+          )
+    )
   }
 
   function cleanTitle(x) {

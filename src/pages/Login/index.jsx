@@ -23,8 +23,8 @@ function Login({ setToken, user, setUser }) {
 
   async function loginUser(credentials) {
     // return fetch("https://lhotka-game-night.herokuapp.com/login", {
-      return fetch("https://lhotka-game-night.herokuapp.com/api/auth/login", {
-    // return fetch("http://localhost:8000/api/auth/login", {
+    //  return fetch("https://lhotka-game-night.herokuapp.com/api/auth/login", {
+    return fetch("http://localhost:8000/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
