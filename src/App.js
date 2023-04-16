@@ -14,8 +14,6 @@ function App() {
   const { token, setToken } = useToken();
   const { user, setUser } = useState({});
 
-  token && console.log('token:' + token);
-
   return (
     <React.StrictMode>
     <div className="container">

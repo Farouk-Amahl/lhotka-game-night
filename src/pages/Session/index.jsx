@@ -16,7 +16,7 @@ function Session({ user, setUser }) {
   const [gamesNoDuplicate, setGamesNoDuplicate] = useState(null);
 
   useEffect(() => {
-    fetch(`https://lhotka-game-night.herokuapp.com/listeselection`)
+    fetch(`http://lhotka.simplicitas.net/select`)
       .then(res => {
         return res.json();
       })

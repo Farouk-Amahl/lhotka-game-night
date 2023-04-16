@@ -29,7 +29,6 @@ function Selection({ selection, updateSelection, nomUser }) {
       gamesSelected.splice( rat, 1)
       gamesSelected.push(item)
     }
-
     return ''
   })
 
@@ -41,7 +40,7 @@ function Selection({ selection, updateSelection, nomUser }) {
 
   function addToSelection(idJeu, photo) {
     !visit &&
-      fetch("https://lhotka-game-night.herokuapp.com/selection", {
+      fetch("http://lhotka.simplicitas.net/selection", {
       // fetch("http://localhost:8000/selection", {
         method: "POST",
         headers: {

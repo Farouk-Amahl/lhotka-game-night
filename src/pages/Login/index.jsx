@@ -24,10 +24,10 @@ function Login({ setToken, user, setUser }) {
   async function loginUser(credentials) {
     // return fetch("https://lhotka-game-night.herokuapp.com/login", {
     //  return fetch("https://lhotka-game-night.herokuapp.com/api/auth/login", {
-    return fetch("http://localhost:8000/api/auth/login", {
+    return fetch("http://lhotka.simplicitas.net/login", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(credentials)
     })
@@ -36,7 +36,7 @@ function Login({ setToken, user, setUser }) {
 
   return (
     <div className="login-wrapper">
-      <h1>Who am I ?</h1>
+      <h1>2.0</h1>
 
       <form  onSubmit={handleSubmit}>
         <p>{errors && `${ errors }`}</p>
