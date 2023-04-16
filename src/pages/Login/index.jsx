@@ -24,7 +24,7 @@ function Login({ setToken, user, setUser }) {
   async function loginUser(credentials) {
     // return fetch("https://lhotka-game-night.herokuapp.com/login", {
     //  return fetch("https://lhotka-game-night.herokuapp.com/api/auth/login", {
-    return fetch("http://lhotka.simplicitas.net/login", {
+    return fetch("https://lhotka.simplicitas.net/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

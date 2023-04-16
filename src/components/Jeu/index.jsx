@@ -17,7 +17,7 @@ function Jeu({
 
 function addToSelection() {
   !visit &&
-    fetch("http://lhotka.simplicitas.net/selection", {
+    fetch("https://lhotka.simplicitas.net/selection", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

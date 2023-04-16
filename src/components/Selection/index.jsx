@@ -40,7 +40,7 @@ function Selection({ selection, updateSelection, nomUser }) {
 
   function addToSelection(idJeu, photo) {
     !visit &&
-      fetch("http://lhotka.simplicitas.net/selection", {
+      fetch("https://lhotka.simplicitas.net/selection", {
       // fetch("http://localhost:8000/selection", {
         method: "POST",
         headers: {
