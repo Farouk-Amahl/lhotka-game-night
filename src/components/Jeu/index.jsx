@@ -1,3 +1,4 @@
+import React from "react";
 import PropTypes from "prop-types";
 import "../../styles/jeux.css";
 import States from "../States";
@@ -10,22 +11,27 @@ function Jeu({
   jeu,
   selection,
   updateSelection,
-  nomUser
+  showPane,
+  nomUser,
+  index,
 }) {
+  const visit = useLocation().pathname === "/visit" ? true : false;
 
-  const visit = useLocation().pathname === '/visit' ? true : false;
-
-function addToSelection() {
-  !visit &&
-    fetch("https://lhotka.simplicitas.net/selection", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ nomUser, idJeu, photo })
-    })
-    .then(res => {return res.json();})
-    .then(data => {updateSelection(data);})
+  function addToSelection() {
+    !visit &&
+      fetch("https://lhotka.simplicitas.net/selection", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ nomUser, idJeu, photo }),
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((data) => {
+          updateSelection(data);
+        });
   }
 
   function htmlDecode(input) {
@@ -34,12 +40,22 @@ function addToSelection() {
   }
 
   return (
-    <div className={`blocJeu ${ selection && selection.find( game => game.jeu === idJeu && game.user === nomUser) ? 'selected' : '' }`} onClick={() => addToSelection()}  >
-      <div className="blocJeuImage">
+    <div
+      id={index}
+      className={`blocJeu ${
+        selection &&
+        selection.find((game) => game.jeu === idJeu && game.user === nomUser)
+          ? "selected"
+          : ""
+      }`}
+    >
+      <div className="blocJeuImage" onClick={() => addToSelection()}>
         <img src={photo} alt={titre} />
       </div>
-      <div className="blocJeuInfo">
+      <div className="blocJeuInfo" onClick={() => showPane(index)}>
         <span>{htmlDecode(titre)}</span>
+        <br />
+        <span className="viewMore to be styled">View more...</span>
         <States jeu={jeu} />
       </div>
     </div>
@@ -49,11 +65,11 @@ function addToSelection() {
 Jeu.propTypes = {
   titre: PropTypes.string,
   nbrJoueurs: PropTypes.number,
-  photo: PropTypes.string
+  photo: PropTypes.string,
 };
 
 Jeu.defaultProps = {
-  titre: "Un jeu"
+  titre: "Un jeu",
 };
 
 export default Jeu;

@@ -1,16 +1,56 @@
+import React, { useState } from "react";
 import "../styles/SortingTool.css";
+import Meeple from "./meeple";
 
-function SortingTool({label, content, sortByNbrPlayers}) {
+function SortingTool({
+  label,
+  content,
+  sortByNbrPlayers,
+  setTwoPlayers,
+  setSoloGames,
+}) {
+  const [clicked, setClicked] = useState("");
+
+  const checkHandler = (choise) => {
+    choise === "two players" && setTwoPlayers(true);
+    choise === "solo" && setSoloGames(true);
+    sortByNbrPlayers(choise);
+    clicked === choise ? setClicked("") : setClicked(choise);
+  };
 
   return (
-    <div className="sotingTool">
-
-    <input type="range" id="nbrPlayersMin" min="1" max="7" step="1" defaultValue="1" onChange={(e) => sortByNbrPlayers(e.target.value, document.getElementById('nbrPlayersMax').value)}/>
-      <div className="range">
-        <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7+</span>
+    <>
+      <div className="sotingTool">
+        <div className="buttonGroup">
+          <button
+            className="sortGamesButtons"
+            onClick={() => checkHandler("solo")}
+          >
+            {clicked === "solo" && `{`}
+            <Meeple fillColor="blueviolet" size="15" />
+            {clicked === "solo" && `}`}
+          </button>
+          <button
+            className="sortGamesButtons"
+            onClick={() => checkHandler("two players")}
+          >
+            {clicked === "two players" && `{`}
+            <Meeple fillColor="blueviolet" size="15" />
+            <Meeple fillColor="blueviolet" size="15" />
+            {clicked === "two players" && `}`}
+          </button>
+        </div>
+        <input
+          type="range"
+          id="nbrPlayersMax"
+          min="3"
+          max="10"
+          step="1"
+          defaultValue="5"
+          onChange={(e) => sortByNbrPlayers(e.target.value)}
+        />
       </div>
-      <input type="range" id="nbrPlayersMax" min="1" max="7" step="1" defaultValue="7" onChange={(e) => sortByNbrPlayers(document.getElementById('nbrPlayersMin').value, e.target.value)}/>
-    </div>
+    </>
   );
 }
 

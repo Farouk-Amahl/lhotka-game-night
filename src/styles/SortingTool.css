@@ -1,8 +1,25 @@
-.sotingTool .range{
-
+.sotingTool {
+  display: flex;
+  flex-direction: column;
 }
 
 .sotingTool .range span {
   display: inline-flex;
   width: calc(100% / 7.5);
+}
+
+.buttonGroup {
+  display: flex;
+  flex-grow: 2;
+  gap: 0.25em;
+}
+
+.sortGamesButtons {
+  width: 100%;
+  padding: 0.5em;
+  background-color: blueviolet;
+  border: none;
+  text-align: center;
+  border-radius: 5px;
+  color: #eef7eb;
 }
