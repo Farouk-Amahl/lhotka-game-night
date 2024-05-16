@@ -8,6 +8,7 @@ function SortingTool({
   sortByNbrPlayers,
   setTwoPlayers,
   setSoloGames,
+  autoClose,
 }) {
   const [clicked, setClicked] = useState("");
 
@@ -16,6 +17,7 @@ function SortingTool({
     choise === "solo" && setSoloGames(true);
     sortByNbrPlayers(choise);
     clicked === choise ? setClicked("") : setClicked(choise);
+    autoClose();
   };
 
   return (

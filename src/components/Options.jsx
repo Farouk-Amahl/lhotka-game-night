@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "../styles/Options.css";
 
 const Options = ({
@@ -8,18 +8,32 @@ const Options = ({
   setTwoPlayers,
   setSoloGames,
 }) => {
+  const [opened, setOpened] = useState("");
+  const [actioned, setActioned] = useState(0);
+  const easyOpening = () => {
+    actioned && clearTimeout(actioned);
+    const toId = setTimeout(() => {
+      setOpened("");
+    }, 1980);
+    setActioned(toId);
+    setOpened("open");
+  };
+
   return (
     <div className="optionWrapper">
-      <div className="Options">
+      <div className={`Options ${opened}`}>
         <div className="optionInner">
           <Content
             sortByNbrPlayers={contentAction}
             setTwoPlayers={setTwoPlayers}
             setSoloGames={setSoloGames}
+            autoClose={easyOpening}
           />
         </div>
       </div>
-      <div className="optionLabel">{label}</div>
+      <div className="optionLabel" onClick={easyOpening}>
+        {label}
+      </div>
     </div>
   );
 };
