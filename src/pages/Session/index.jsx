@@ -1,6 +1,6 @@
 // doit changer de nom pour devenir gameCard
 import React from "react";
-import Jeu from "../../components/Jeu";
+import GameCard from "../../components/GameCard";
 import { useState, useEffect } from "react";
 import Selection from "../../components/Selection";
 import Options from "../../components/Options";
@@ -8,9 +8,18 @@ import SortingTool from "../../components/SortingTool";
 import "../../styles/session.css";
 import convert from "xml-js";
 import SlidingPane from "react-sliding-pane";
+import NiceList from "../../components/NiceList";
+// import ExpandableText from "../../components/ExpandableText";
 import "react-sliding-pane/dist/react-sliding-pane.css";
+import "../../styles/customSlidingPane.css";
 
 function Session({ user, setUser }) {
+  const [gameOwnersList, setGameOwnersList] = useState([
+    "mcxii",
+    "Scrobs",
+    "Ruhtro",
+    "MarkoHighlander",
+  ]);
   const [gamesOwned, setGamesOwned] = useState([]);
   const [completeListOfGames, setCompleteListOfGames] = useState([]);
   const [displayedListOfGames, setDisplayedListOfGames] = useState([]);
@@ -23,11 +32,13 @@ function Session({ user, setUser }) {
   const [twoPlayersClicked, setTwoPlayersClicked] = useState(false);
   const [soloGameClicked, setSoloGameClicked] = useState(false);
 
+  useEffect(() => {
+    setGameOwnersList(["mcxii", "Scrobs", "Ruhtro", "MarkoHighlander"]);
+  }, []);
   // getting exaustive list of games but missing information, more complete list on the next useEffect
   useEffect(() => {
     const fetchAllPlayersLists = async () => {
-      const listOfPlayers = ["mcxii", "Scrobs", "Ruhtro", "MarkoHighlander"];
-      const requests = listOfPlayers.map(async (player) => {
+      const requests = gameOwnersList.map(async (player) => {
         const response = await fetch(
           `https://api.geekdo.com/xmlapi2/collection?username=${player}`
         );
@@ -41,9 +52,13 @@ function Session({ user, setUser }) {
         const namesAndGames = [];
         responses.forEach((playerList, index) => {
           playerList.items.item.forEach((game) => {
-            game._attributes.owner = listOfPlayers[index];
+            console.log(game.status._attributes.own);
+            game._attributes.owner = gameOwnersList[index];
           });
-          namesAndGames.push(playerList.items.item);
+          const onlyOwned = playerList.items.item.filter((game) => {
+            return game.status._attributes.own === "1";
+          });
+          namesAndGames.push(onlyOwned);
         });
         setGamesOwned(namesAndGames);
       } catch (error) {
@@ -51,7 +66,7 @@ function Session({ user, setUser }) {
       }
     };
     fetchAllPlayersLists();
-  }, []);
+  }, [gameOwnersList]);
 
   useEffect(() => {
     const fetchMoreCompleteListOfGames = async () => {
@@ -198,6 +213,7 @@ function Session({ user, setUser }) {
   const setThePane = (gameIndex) => {
     setGameWithInfo(displayedListOfGames.at(gameIndex));
     setPaneState(true);
+    /*console.log(gameWithInfo);*/
   };
 
   const htmlDecode = (input) => {
@@ -240,11 +256,12 @@ function Session({ user, setUser }) {
           />
           {displayedListOfGames &&
             displayedListOfGames.map((game, index) => (
-              <Jeu
+              <GameCard
+                game={game}
                 key={game._attributes.id}
-                titre={
+                title={
                   game.name[0]
-                    ? game.name[game.name.length - 1]._attributes.value
+                    ? game.name[0]._attributes.value
                     : game.name._attributes.value
                 }
                 idJeu={game._attributes.id}
@@ -260,8 +277,9 @@ function Session({ user, setUser }) {
         </div>
       </div>
       <SlidingPane
-        className="some-custom-class"
+        className="theSlidingPane"
         overlayClassName="some-custom-overlay-class"
+        width="98%"
         isOpen={paneState}
         title={htmlDecode(
           gameWithInfo.name &&
@@ -273,18 +291,10 @@ function Session({ user, setUser }) {
           setPaneState(false);
         }}
       >
-        <div>
-          {gameWithInfo.description &&
-            htmlDecode(gameWithInfo.description._text)}
-        </div>
-        <br />
-        <img
-          src={gameWithInfo.description && htmlDecode(gameWithInfo.image._text)}
-          alt={
-            gameWithInfo.name &&
-            firtInList(gameWithInfo.name, "_attributes.value")
-          }
-        />
+        <NiceList list={gameWithInfo.link} />
+        {/*<ExpandableText
+          textToDisplay={htmlDecode(gameWithInfo.description._text)}
+        />*/}
       </SlidingPane>
     </>
   );

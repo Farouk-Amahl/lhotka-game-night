@@ -29,7 +29,7 @@ function SortingTool({
             onClick={() => checkHandler("solo")}
           >
             {clicked === "solo" && `{`}
-            <Meeple fillColor="blueviolet" size="15" />
+            <Meeple fillColor="white" size="15" />
             {clicked === "solo" && `}`}
           </button>
           <button
@@ -37,8 +37,8 @@ function SortingTool({
             onClick={() => checkHandler("two players")}
           >
             {clicked === "two players" && `{`}
-            <Meeple fillColor="blueviolet" size="15" />
-            <Meeple fillColor="blueviolet" size="15" />
+            <Meeple fillColor="white" size="15" />
+            <Meeple fillColor="white" size="15" />
             {clicked === "two players" && `}`}
           </button>
         </div>
@@ -49,7 +49,10 @@ function SortingTool({
           max="10"
           step="1"
           defaultValue="5"
-          onChange={(e) => sortByNbrPlayers(e.target.value)}
+          onChange={(e) => {
+            sortByNbrPlayers(e.target.value);
+            autoClose();
+          }}
         />
       </div>
     </>
