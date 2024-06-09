@@ -20,7 +20,7 @@ function Session({ user, setUser }) {
   const [displayedListOfGames, setDisplayedListOfGames] = useState([]);
 
   const currentUser = sessionStorage.getItem("userName");
-  const [selection, updateSelection] = useState(null);
+  const [selection, updateSelection] = useState([]);
   const [paneState, setPaneState] = useState(false);
   const [gameWithInfo, setGameWithInfo] = useState({});
 

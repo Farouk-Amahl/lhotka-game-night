@@ -1,46 +1,39 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "../../styles/selection.css";
 import { useLocation } from "react-router-dom";
 
 function Selection({ selection, updateSelection, userName }) {
-  console.log(selection);
   const visit = useLocation().pathname === "/visit" ? true : false;
+  const [gamesSelected, setGameSelected] = useState([]);
 
-  const gamesSelected = [];
-  const passage = [];
-
-  selection &&
-    selection.forEach((game) => {
-      let nbrChoise = 0;
-      const item = {
-        id: game.gameId,
-        img: game.gameImage,
-        user: game.userName,
-        nbrChoise: nbrChoise,
-      };
-      if (gamesSelected.indexOf(game.gameId) === -1) {
-        passage.push(game.gameId);
-        item.nbrChoise++;
-        gamesSelected.push(item);
+  useEffect(() => {
+    const tempArray = [];
+    selection.forEach((selectedGame) => {
+      if (
+        tempArray.findIndex(
+          (element) => element.gameId === selectedGame.gameId
+        ) === -1
+      ) {
+        selectedGame.nbrChoise = 1;
+        tempArray.push(selectedGame);
       } else {
-        const moreThanOne = gamesSelected.at(game.gameId);
-        moreThanOne.nbrChoise++;
-        moreThanOne.user += ", " + game.user;
-        /*const rat = gamesSelected.findIndex(
-          (foo) => foo.gameId === game.gameId
+        const moreThanOne = tempArray.at(
+          tempArray.findIndex(
+            (element) => element.gameId === selectedGame.gameId
+          )
         );
-        let user = gamesSelected[rat].user;
-        item.user = user + ", " + game.user;
-        gamesSelected.splice(rat, 1);
-        gamesSelected.push(item);*/
+        moreThanOne.nbrChoise++;
+        moreThanOne.userName += ", " + selectedGame.userName;
       }
     });
-
-  gamesSelected.sort(function compare(a, b) {
-    if (a.nbrChoise > b.nbrChoise) return -1;
-    if (a.nbrChoise < b.nbrChoise) return 1;
-    return 0;
-  });
+    tempArray.sort(function compare(a, b) {
+      if (a.nbrChoise > b.nbrChoise) return -1;
+      if (a.nbrChoise < b.nbrChoise) return 1;
+      return 0;
+    });
+    setGameSelected(tempArray);
+    // console.log(selection);
+  }, [selection]);
 
   function addToSelection(gameId, gameImage) {
     !visit &&
@@ -67,17 +60,17 @@ function Selection({ selection, updateSelection, userName }) {
           <div
             className="blocSelection"
             key={game.id}
-            onClick={() => addToSelection(game.id, game.img)}
+            onClick={() => addToSelection(game.gameId, game.gameImage)}
           >
             <div
               className={`blocSelectionImage ${
-                game.user.indexOf(userName) !== -1 && "select"
+                game.userName.indexOf(userName) !== -1 && "select"
               }`}
             >
-              <img src={game.img} alt={game.id} />
+              <img src={game.gameImage} alt={game.id} />
             </div>
             <span className="blocSelectionCompte">{game.nbrChoise}</span>
-            <span className="blocSelectionVoters">{game.user}</span>
+            <span className="blocSelectionVoters">{game.userName}</span>
           </div>
         ))}
     </div>
