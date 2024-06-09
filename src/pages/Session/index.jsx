@@ -52,7 +52,7 @@ function Session({ user, setUser }) {
         const namesAndGames = [];
         responses.forEach((playerList, index) => {
           playerList.items.item.forEach((game) => {
-            console.log(game.status._attributes.own);
+            // console.log(game.status._attributes.own);
             game._attributes.owner = gameOwnersList[index];
           });
           const onlyOwned = playerList.items.item.filter((game) => {
