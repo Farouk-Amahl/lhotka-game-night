@@ -69,7 +69,10 @@ function Selection({ selection, updateSelection, userName }) {
             >
               <img src={game.gameImage} alt={game.id} />
             </div>
-            <span className="blocSelectionCompte">{game.nbrChoise}</span>
+
+            {game.nbrChoise > 1 && (
+              <span className="blocSelectionCompte">{game.nbrChoise}</span>
+            )}
             <span className="blocSelectionVoters">{game.userName}</span>
           </div>
         ))}
