@@ -14,17 +14,12 @@ import "react-sliding-pane/dist/react-sliding-pane.css";
 import "../../styles/customSlidingPane.css";
 
 function Session({ user, setUser }) {
-  const [gameOwnersList, setGameOwnersList] = useState([
-    "mcxii",
-    "Scrobs",
-    "Ruhtro",
-    "MarkoHighlander",
-  ]);
+  const [gameOwnersList, setGameOwnersList] = useState([]);
   const [gamesOwned, setGamesOwned] = useState([]);
   const [completeListOfGames, setCompleteListOfGames] = useState([]);
   const [displayedListOfGames, setDisplayedListOfGames] = useState([]);
 
-  const nomUser = sessionStorage.getItem("userName");
+  const currentUser = sessionStorage.getItem("userName");
   const [selection, updateSelection] = useState(null);
   const [paneState, setPaneState] = useState(false);
   const [gameWithInfo, setGameWithInfo] = useState({});
@@ -241,7 +236,7 @@ function Session({ user, setUser }) {
         <Selection
           selection={selection}
           updateSelection={updateSelection}
-          nomUser={nomUser}
+          userName={currentUser}
         />
       </div>
       <div className="sessionContainer">
@@ -263,13 +258,12 @@ function Session({ user, setUser }) {
                     ? game.name[0]._attributes.value
                     : game.name._attributes.value
                 }
-                idJeu={game._attributes.id}
-                photo={game.thumbnail._text}
-                jeu={game}
+                gameId={game._attributes.id}
+                gameImage={game.thumbnail._text}
                 selection={selection}
                 updateSelection={updateSelection}
                 showPane={setThePane}
-                nomUser={nomUser}
+                userName={currentUser}
                 index={index}
               />
             ))}
@@ -295,7 +289,7 @@ function Session({ user, setUser }) {
           textToDisplay={htmlDecode(gameWithInfo.description._text)}
         />*/}
       </SlidingPane>
-      <span>v2.0.0001</span>
+      <span>v2.0.0002</span>
     </>
   );
 }

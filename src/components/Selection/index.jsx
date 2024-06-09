@@ -1,36 +1,40 @@
+import React from "react";
 import "../../styles/selection.css";
 import { useLocation } from "react-router-dom";
 
-function Selection({ selection, updateSelection, nomUser }) {
-  /*const selectionDeJeux = selection && [
-    ...new Map(selection.map(item => [item["jeu"], item])).values()
-  ];*/
-  const visit = useLocation().pathname === '/visit' ? true : false;
+function Selection({ selection, updateSelection, userName }) {
+  console.log(selection);
+  const visit = useLocation().pathname === "/visit" ? true : false;
 
   const gamesSelected = [];
-  const passage = []
+  const passage = [];
 
-  selection && selection.map( game => {
-    const nbrChoise = selection.filter(x => x.jeu === game.jeu).length
-    const item = {
-      id: game.jeu,
-      img: game.imgJeu,
-      user: game.user,
-      nbrChoise: nbrChoise
-    }
-    if(passage.indexOf(game.jeu) === -1){
-      const num = game.jeu
-      passage.push(num)
-      gamesSelected.push(item)
-    }else{
-      const rat = gamesSelected.findIndex(jeu => jeu.id === game.jeu)
-      let user = gamesSelected[rat].user
-      item.user = user+', '+game.user
-      gamesSelected.splice( rat, 1)
-      gamesSelected.push(item)
-    }
-    return ''
-  })
+  selection &&
+    selection.forEach((game) => {
+      let nbrChoise = 0;
+      const item = {
+        id: game.gameId,
+        img: game.gameImage,
+        user: game.userName,
+        nbrChoise: nbrChoise,
+      };
+      if (gamesSelected.indexOf(game.gameId) === -1) {
+        passage.push(game.gameId);
+        item.nbrChoise++;
+        gamesSelected.push(item);
+      } else {
+        const moreThanOne = gamesSelected.at(game.gameId);
+        moreThanOne.nbrChoise++;
+        moreThanOne.user += ", " + game.user;
+        /*const rat = gamesSelected.findIndex(
+          (foo) => foo.gameId === game.gameId
+        );
+        let user = gamesSelected[rat].user;
+        item.user = user + ", " + game.user;
+        gamesSelected.splice(rat, 1);
+        gamesSelected.push(item);*/
+      }
+    });
 
   gamesSelected.sort(function compare(a, b) {
     if (a.nbrChoise > b.nbrChoise) return -1;
@@ -38,32 +42,42 @@ function Selection({ selection, updateSelection, nomUser }) {
     return 0;
   });
 
-  function addToSelection(idJeu, photo) {
+  function addToSelection(gameId, gameImage) {
     !visit &&
       fetch("https://lhotka.simplicitas.net/selection", {
-      // fetch("http://localhost:8000/selection", {
+        // fetch("http://localhost:8000/selection", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ nomUser, idJeu, photo })
+        body: JSON.stringify({ userName, gameId, gameImage }),
       })
-      .then(res => {return res.json();})
-      .then(data => {updateSelection(data);})
-    }
+        .then((res) => {
+          return res.json();
+        })
+        .then((data) => {
+          updateSelection(data);
+        });
+  }
 
   return (
     <div className="selection">
       {selection &&
-        gamesSelected.map(jeu => (
-          <div className="blocSelection" key={jeu.id} onClick={() => addToSelection(jeu.id, jeu.img)}>
-            <div className={ `blocSelectionImage ${ jeu.user.indexOf(nomUser) !== -1 && 'select' }` }>
-              <img src={jeu.img} alt={jeu.jeu} />
+        gamesSelected.map((game) => (
+          <div
+            className="blocSelection"
+            key={game.id}
+            onClick={() => addToSelection(game.id, game.img)}
+          >
+            <div
+              className={`blocSelectionImage ${
+                game.user.indexOf(userName) !== -1 && "select"
+              }`}
+            >
+              <img src={game.img} alt={game.id} />
             </div>
-            <span className="blocSelectionCompte">
-              {jeu.nbrChoise}
-            </span>
-            <span  className="blocSelectionVoters">{ jeu.user }</span>
+            <span className="blocSelectionCompte">{game.nbrChoise}</span>
+            <span className="blocSelectionVoters">{game.user}</span>
           </div>
         ))}
     </div>
