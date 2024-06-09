@@ -1,0 +1,16 @@
+.niceListContainer {
+  display: flex;
+  align-content: center;
+}
+
+.niceList {
+  display: inline-flex;
+}
+
+.niceListItem {
+  text-transform: lowercase;
+}
+
+.niceListItem:not(:last-child)::after {
+  content: " \25A0 ";
+}
