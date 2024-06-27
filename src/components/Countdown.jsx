@@ -9,10 +9,14 @@ const Countdown = ({ altText }) => {
   const getNextThursdayAtNineteen = useCallback(() => {
     const now = new Date();
     const today = now.getDay();
-    const daysToGo = (4 - today + 7) % 7 || 7;
+    const hourNextGame = 19;
+    const daysToGo =
+      today === 4 && now.getHours() < hourNextGame
+        ? 0
+        : (4 - today + 7) % 7 || 7;
     const nextGame = new Date(now);
     nextGame.setDate(now.getDate() + daysToGo);
-    nextGame.setHours(19, 0, 0);
+    nextGame.setHours(hourNextGame, 0, 0);
 
     const secondsLeft = Math.floor((nextGame.valueOf() - now.valueOf()) / 1000);
     // console.log(secondsLeft)
@@ -32,19 +36,20 @@ const Countdown = ({ altText }) => {
       seconds - days * 24 * 60 * 60 - hours * 60 * 60 - minutes * 60
     );
     const toDisplay = [];
-    toDisplay.push(days, "d");
-
+    if (secondsLeft > 60 * 60 * hourNextGame) {
+      toDisplay.push(days, "d");
+    }
     toDisplay.push(hours, "h", minutes, "m", seconds, "s");
     return toDisplay;
   }, []);
   const [countdown, setCountdown] = useState(getNextThursdayAtNineteen());
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    const intervalId = setInterval(() => {
       setCountdown(getNextThursdayAtNineteen());
     }, 1000);
     return () => {
-      clearInterval(interval);
+      clearInterval(intervalId);
     };
   }, [getNextThursdayAtNineteen]);
 
