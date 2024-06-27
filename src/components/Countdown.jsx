@@ -2,28 +2,31 @@ import React, { useCallback, useEffect, useState } from "react";
 import GiveSomeLovin from "./GiveSomeLovin";
 import "./../styles/glitch.css";
 
-const Countdown = ({ altText }) => {
+const Countdown = ({ textToDisplay }) => {
+  const altText = textToDisplay;
   const addAZero = (num) => {
     return num < 10 ? "0" + num : num;
   };
-  const getNextThursdayAtNineteen = useCallback(() => {
+  const getNextThursdayAtNineteen = useCallback((altText) => {
     const now = new Date();
     const today = now.getDay();
+    const dayNextGame = 4;
     const hourNextGame = 19;
+    const timeGameSession = 5;
     const daysToGo =
-      today === 4 && now.getHours() < hourNextGame
+      today === dayNextGame && now.getHours() < hourNextGame
         ? 0
-        : (4 - today + 7) % 7 || 7;
+        : (dayNextGame - today + 7) % 7 || 7;
     const nextGame = new Date(now);
     nextGame.setDate(now.getDate() + daysToGo);
     nextGame.setHours(hourNextGame, 0, 0);
 
     const secondsLeft = Math.floor((nextGame.valueOf() - now.valueOf()) / 1000);
-    // console.log(secondsLeft)
-    /*
-    if (secondsLeft > 60 * 60 * 24 * 6 + 25200) {
+
+    if (secondsLeft > 60 * 60 * 24 * 6 + timeGameSession) {
+      //setAltText("");
       return ["GAME ON"];
-    }*/
+    }
 
     let seconds = secondsLeft;
     let minutes = Math.floor(seconds / 60);
@@ -39,7 +42,13 @@ const Countdown = ({ altText }) => {
     if (secondsLeft > 60 * 60 * hourNextGame) {
       toDisplay.push(days, "d");
     }
-    toDisplay.push(hours, "h", minutes, "m", seconds, "s");
+    if (secondsLeft > 60 * 60) {
+      toDisplay.push(hours, "h");
+    }
+    if (secondsLeft > 60) {
+      toDisplay.push(minutes, "m");
+    }
+    toDisplay.push(seconds, "s");
     return toDisplay;
   }, []);
   const [countdown, setCountdown] = useState(getNextThursdayAtNineteen());
@@ -56,7 +65,9 @@ const Countdown = ({ altText }) => {
   return (
     <>
       <div className="textHome glitch-wrapper">
-        {altText && <div className="countdownAltText">{`${altText}`}</div>}
+        {altText && countdown.length > 1 && (
+          <div className="countdownAltText">{`${altText}`}</div>
+        )}
         <div className="textHomeCountdown glitch">
           {countdown && (
             <span>
