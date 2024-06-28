@@ -2,12 +2,13 @@ import React, { useCallback, useEffect, useState } from "react";
 import GiveSomeLovin from "./GiveSomeLovin";
 import "./../styles/glitch.css";
 
-const Countdown = ({ textToDisplay }) => {
+const Countdown = ({ textToDisplay, onCountdownReset }) => {
   const altText = textToDisplay;
   const addAZero = (num) => {
     return num < 10 ? "0" + num : num;
   };
-  const getNextThursdayAtNineteen = useCallback((altText) => {
+
+  const getNextThursdayAtNineteen = useCallback(() => {
     const now = new Date();
     const today = now.getDay();
     const dayNextGame = 4;
@@ -24,7 +25,7 @@ const Countdown = ({ textToDisplay }) => {
     const secondsLeft = Math.floor((nextGame.valueOf() - now.valueOf()) / 1000);
 
     if (secondsLeft > 60 * 60 * 24 * 7 - timeGameSession * 3600) {
-      //setAltText("");
+      onCountdownReset && onCountdownReset();
       return ["GAME ON"];
     }
 
@@ -50,7 +51,8 @@ const Countdown = ({ textToDisplay }) => {
     }
     toDisplay.push(seconds, "s");
     return toDisplay;
-  }, []);
+  }, [onCountdownReset]);
+
   const [countdown, setCountdown] = useState(getNextThursdayAtNineteen());
 
   useEffect(() => {
