@@ -8,7 +8,7 @@ function Home() {
     <div className="divHome">
       <Link to="/pres">
         <div className="divTextHome">
-          <Countdown altText="Next Games in..." />
+          <Countdown textToDisplay="Next Games in..." />
         </div>
       </Link>
     </div>
