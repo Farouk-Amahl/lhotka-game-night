@@ -23,7 +23,7 @@ const Countdown = ({ textToDisplay }) => {
 
     const secondsLeft = Math.floor((nextGame.valueOf() - now.valueOf()) / 1000);
 
-    if (secondsLeft > 60 * 60 * 24 * 6 + timeGameSession) {
+    if (secondsLeft > 60 * 60 * 24 * 7 - timeGameSession * 3600) {
       //setAltText("");
       return ["GAME ON"];
     }
