@@ -31,6 +31,7 @@ const GameCard = ({
         })
         .then((data) => {
           updateSelection(data);
+          console.log(selection);
         })
         .catch((err) => {
           console.log("caught it!", err);
@@ -38,14 +39,23 @@ const GameCard = ({
   };
   // console.log(game);
   return (
-    <div id={index} className="gameBlock">
-      <div className="gameImageBlock" onClick={() => addToSelection()}>
+    <div
+      id={index}
+      className={`gameBlock ${
+        selection &&
+        selection.find(
+          (game) => game.gameId === gameId && game.userName === userName
+        )
+          ? "selected"
+          : ""
+      }`}
+    >
+      <div className={`gameImageBlock`} onClick={() => addToSelection()}>
         <img src={game.thumbnail._text} alt={game.title} />
       </div>
       <div className="gameInfosBlock" onClick={() => showPane(index)}>
-        <span>{title}</span>
-        <br />
-        <span className="viewMore to be styled">View more...</span>
+        <div className="gameTitle">{title}</div>
+        <div className="viewMore">View more...</div>
         <GameSpecs game={game} />
       </div>
     </div>

@@ -49,3 +49,26 @@
 .blockSpecs .icon {
   padding: auto;
 }
+
+.gameTitle {
+  width: 100%;
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+  height: 2em;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  text-overflow: ellipsis;
+  font-size: 0.8em;
+}
+
+.viewMore {
+  padding: 0.5em;
+  background-color: blueviolet;
+  border-radius: 5px;
+  color: #eef7eb;
+  font-size: 0.8em;
+  margin: 0.5em 0;
+  text-align: center;
+}
