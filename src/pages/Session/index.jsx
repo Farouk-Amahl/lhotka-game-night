@@ -1,4 +1,3 @@
-// doit changer de nom pour devenir gameCard
 import React from "react";
 import GameCard from "../../components/GameCard";
 import { useState, useEffect } from "react";
@@ -9,7 +8,7 @@ import "../../styles/session.css";
 import convert from "xml-js";
 import SlidingPane from "react-sliding-pane";
 import NiceList from "../../components/NiceList";
-// import ExpandableText from "../../components/ExpandableText";
+/* import ExpandableText from "../../components/ExpandableText";*/
 import "react-sliding-pane/dist/react-sliding-pane.css";
 import "../../styles/customSlidingPane.css";
 
@@ -56,7 +55,7 @@ function Session({ user, setUser }) {
         });
         setGamesOwned(namesAndGames);
       } catch (error) {
-        console.error("Something went funcky :", error);
+        console.error("Trying to fetch every players's lists :", error);
       }
     };
     fetchAllPlayersLists();
@@ -71,17 +70,41 @@ function Session({ user, setUser }) {
             stringOfGamesIds.push(game._attributes.objectid);
           });
         });
+      stringOfGamesIds = [...new Set(stringOfGamesIds)];
+      let chunks = [];
+      stringOfGamesIds.map((chunk, index) => {
+        return "prout";
+      });
+      for (let i = 0; i < stringOfGamesIds.length / 20; i++) {
+        chunks[i] = stringOfGamesIds.slice(i * 20, i * 20 + 20);
+      }
+      // console.log("chunk trigerred..." + chunk.length + " games");
+      stringOfGamesIds = chunks;
+      // console.log(stringOfGamesIds);
+      chunks = [];
       try {
-        stringOfGamesIds = [...new Set(stringOfGamesIds)];
-        stringOfGamesIds.join(",");
-        const response = await fetch(
+        for (let i = 0; i < stringOfGamesIds.length; i++) {
+          const chunk = stringOfGamesIds[i];
+          chunk.join(",");
+          const response = await fetch(
+            `https://api.geekdo.com/xmlapi2/thing?id=` + chunk
+          );
+          const data = await response.text();
+          const clearJson = convert.xml2js(data, { compact: true, spaces: 4 });
+          chunks = chunks.concat(clearJson.items.item);
+        }
+        // console.log(chunks);
+        setCompleteListOfGames(chunks);
+        /*stringOfGamesIds = [...new Set(stringOfGamesIds)];
+        stringOfGamesIds.join(",");*/
+        /*const response = await fetch(
           `https://api.geekdo.com/xmlapi2/thing?id=` + stringOfGamesIds
         );
         const data = await response.text();
         const clearJson = convert.xml2js(data, { compact: true, spaces: 4 });
-        setCompleteListOfGames(clearJson.items.item);
+        setCompleteListOfGames(clearJson.items.item);*/
       } catch (error) {
-        console.error("That's bad, this doesn't fit :", error);
+        console.error("Getting full list of games by theire ids :", error);
       }
     };
     fetchMoreCompleteListOfGames();
@@ -129,7 +152,7 @@ function Session({ user, setUser }) {
       );
       setDisplayedListOfGames(filtered);
     } catch (error) {
-      console.error("Aie, Aie, Aie : ", error);
+      console.error("The to be displayed list of games : ", error);
     }
   }, [completeListOfGames, gamesOwned]);
 
@@ -207,7 +230,7 @@ function Session({ user, setUser }) {
   const setThePane = (gameIndex) => {
     setGameWithInfo(displayedListOfGames.at(gameIndex));
     setPaneState(true);
-    /*console.log(gameWithInfo);*/
+    console.log(gameWithInfo);
   };
 
   const htmlDecode = (input) => {
@@ -250,6 +273,8 @@ function Session({ user, setUser }) {
           />
           {displayedListOfGames &&
             displayedListOfGames.map((game, index) => (
+              /*completeListOfGames &&
+              completeListOfGames.map((game, index) => (*/
               <GameCard
                 game={game}
                 key={game._attributes.id}
@@ -272,7 +297,7 @@ function Session({ user, setUser }) {
       <SlidingPane
         className="theSlidingPane"
         overlayClassName="some-custom-overlay-class"
-        width="98%"
+        width="100%"
         isOpen={paneState}
         title={htmlDecode(
           gameWithInfo.name &&
@@ -289,7 +314,7 @@ function Session({ user, setUser }) {
           textToDisplay={htmlDecode(gameWithInfo.description._text)}
         />*/}
       </SlidingPane>
-      <span>v2.0.0002</span>
+      <span>v2.0.0003</span>
     </>
   );
 }
