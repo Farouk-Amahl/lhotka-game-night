@@ -106,7 +106,7 @@ function Session({ user, setUser }) {
             );
             (async () => {
               const rawResponse = await fetch(
-                "http://gamenightbackend.makak.space//?action=cached"
+                "https://gamenightbackend.makak.space//?action=cached"
               );
               let content = await rawResponse.json();
               content = JSON.parse(content);
@@ -141,7 +141,7 @@ function Session({ user, setUser }) {
 
                 (async () => {
                   const rawResponse = await fetch(
-                    "http://gamenightbackend.makak.space/?action=cache",
+                    "https://gamenightbackend.makak.space/?action=cache",
                     {
                       method: "POST",
                       headers: {
