@@ -1,6 +1,7 @@
+// @ts-nocheck
 import React from "react";
 import GameCard from "../../components/GameCard";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Selection from "../../components/Selection";
 import Options from "../../components/Options";
 import SortingTool from "../../components/SortingTool";
@@ -9,12 +10,13 @@ import convert from "xml-js";
 import SlidingPane from "react-sliding-pane";
 import NiceList from "../../components/NiceList";
 /* import ExpandableText from "../../components/ExpandableText";*/
-import "react-sliding-pane/dist/react-sliding-pane.css";
-import "../../styles/customSlidingPane.css";
+// import "react-sliding-pane/dist/react-sliding-pane.css";
+// import "../../styles/customSlidingPane.css";
 
 function Session({ user, setUser }) {
   const [gameOwnersList, setGameOwnersList] = useState([]);
   const [gamesOwned, setGamesOwned] = useState([]);
+  const ownedGames = useRef([]);
   const [completeListOfGames, setCompleteListOfGames] = useState([]);
   const [displayedListOfGames, setDisplayedListOfGames] = useState([]);
 
@@ -26,135 +28,199 @@ function Session({ user, setUser }) {
   const [twoPlayersClicked, setTwoPlayersClicked] = useState(false);
   const [soloGameClicked, setSoloGameClicked] = useState(false);
 
+  /*useEffect(() => {
+  }, []);*/
+
+  // setting the list of game owners
   useEffect(() => {
     setGameOwnersList(["mcxii", "Scrobs", "Ruhtro", "MarkoHighlander"]);
+    console.log("1.setting the list of game owners, going to next step");
   }, []);
+
   // getting exaustive list of games but missing information, more complete list on the next useEffect
   useEffect(() => {
-    const fetchAllPlayersLists = async () => {
-      const requests = gameOwnersList.map(async (player) => {
-        const response = await fetch(
-          `https://api.geekdo.com/xmlapi2/collection?username=${player}`
-        );
-        const data = await response.text();
-        const clearJson = convert.xml2js(data, { compact: true, spaces: 4 });
-        return clearJson;
-      });
-
-      try {
-        const responses = await Promise.all(requests);
-        const namesAndGames = [];
-        responses.forEach((playerList, index) => {
-          playerList.items.item.forEach((game) => {
-            game._attributes.owner = gameOwnersList[index];
-          });
-          const onlyOwned = playerList.items.item.filter((game) => {
-            return game.status._attributes.own === "1";
-          });
-          namesAndGames.push(onlyOwned);
+    if (gameOwnersList.length !== 0) {
+      const fetchAllPlayersLists = async () => {
+        const requests = gameOwnersList.map(async (player) => {
+          const response = await fetch(
+            `https://api.geekdo.com/xmlapi2/collection?username=${player}`
+          );
+          const data = await response.text();
+          const clearJson = convert.xml2js(data, { compact: true, spaces: 4 });
+          return clearJson;
         });
-        setGamesOwned(namesAndGames);
-      } catch (error) {
-        console.error("Trying to fetch every players's lists :", error);
-      }
-    };
-    fetchAllPlayersLists();
+
+        try {
+          const responses = await Promise.all(requests);
+          const namesAndGames = [];
+          responses.forEach((playerList, index) => {
+            if (playerList.items !== undefined) {
+              playerList.items.item.forEach((game) => {
+                game._attributes.owner = gameOwnersList[index];
+              });
+              const onlyOwned = playerList.items.item.filter((game) => {
+                return game.status._attributes.own === "1";
+              });
+              namesAndGames.push(onlyOwned);
+            }
+          });
+          setGamesOwned(namesAndGames);
+          console.log(
+            "2.Loop on games owners putting in place the list of games owned"
+          );
+        } catch (error) {
+          console.error("Trying to fetch every players's lists :", error);
+        }
+      };
+      fetchAllPlayersLists();
+    }
   }, [gameOwnersList]);
 
+  // now getting the real list of games with all the information we need
   useEffect(() => {
-    const fetchMoreCompleteListOfGames = async () => {
-      let stringOfGamesIds = [];
-      gamesOwned &&
+    if (gamesOwned.length !== 0) {
+      ownedGames.current = gamesOwned;
+      const fetchMoreCompleteListOfGames = async () => {
+        let stringOfGamesIds = [];
         gamesOwned.forEach((playerGamesList) => {
           playerGamesList.forEach((game) => {
             stringOfGamesIds.push(game._attributes.objectid);
           });
         });
-      stringOfGamesIds = [...new Set(stringOfGamesIds)];
-      let chunks = [];
-      stringOfGamesIds.map((chunk, index) => {
-        return "prout";
-      });
-      for (let i = 0; i < stringOfGamesIds.length / 20; i++) {
-        chunks[i] = stringOfGamesIds.slice(i * 20, i * 20 + 20);
-      }
-      // console.log("chunk trigerred..." + chunk.length + " games");
-      stringOfGamesIds = chunks;
-      // console.log(stringOfGamesIds);
-      chunks = [];
-      try {
-        for (let i = 0; i < stringOfGamesIds.length; i++) {
-          const chunk = stringOfGamesIds[i];
-          chunk.join(",");
-          const response = await fetch(
-            `https://api.geekdo.com/xmlapi2/thing?id=` + chunk
-          );
-          const data = await response.text();
-          const clearJson = convert.xml2js(data, { compact: true, spaces: 4 });
-          chunks = chunks.concat(clearJson.items.item);
+        // to make sure that the list is always the same
+        stringOfGamesIds.sort((a, b) => a - b);
+        if (localStorage.getItem("gamesOwned") !== undefined) {
+          const storedGamesOwned = localStorage.getItem("gamesOwned");
+          const currentGamesOwned = stringOfGamesIds.join(",");
+          if (storedGamesOwned === currentGamesOwned) {
+            console.log(
+              "2,1.checking if the data is already loaded the response is yes"
+            );
+            (async () => {
+              const rawResponse = await fetch(
+                "http://gamenightbackend.makak.space//?action=cached"
+              );
+              let content = await rawResponse.json();
+              content = JSON.parse(content);
+              setCompleteListOfGames(content);
+            })();
+          } else {
+            if (currentGamesOwned) {
+              console.log(
+                "There's some changes so let's reload things from bgg"
+              );
+              stringOfGamesIds = [...new Set(stringOfGamesIds)];
+              let chunks = [];
+              for (let i = 0; i < stringOfGamesIds.length / 20; i++) {
+                chunks[i] = stringOfGamesIds.slice(i * 20, i * 20 + 20);
+              }
+              stringOfGamesIds = chunks;
+              chunks = [];
+              try {
+                for (let i = 0; i < stringOfGamesIds.length; i++) {
+                  const chunk = stringOfGamesIds[i];
+                  chunk.join(",");
+                  const response = await fetch(
+                    `https://api.geekdo.com/xmlapi2/thing?id=` + chunk
+                  );
+                  const data = await response.text();
+                  const clearJson = convert.xml2js(data, {
+                    compact: true,
+                    spaces: 4,
+                  });
+                  chunks = chunks.concat(clearJson.items.item);
+                }
+
+                (async () => {
+                  const rawResponse = await fetch(
+                    "http://gamenightbackend.makak.space/?action=cache",
+                    {
+                      method: "POST",
+                      headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify(chunks),
+                    }
+                  );
+                  const content = await rawResponse.json();
+                  console.log(content);
+                })();
+                setCompleteListOfGames(chunks);
+                localStorage.setItem("gamesOwned", currentGamesOwned);
+              } catch (error) {
+                console.error(
+                  "Getting full list of games by theire ids :",
+                  error
+                );
+              }
+            }
+          }
+        } else {
+          if (stringOfGamesIds.join(",")) {
+            localStorage.setItem("gamesOwned", stringOfGamesIds.join(","));
+          }
         }
-        // console.log(chunks);
-        setCompleteListOfGames(chunks);
-        /*stringOfGamesIds = [...new Set(stringOfGamesIds)];
-        stringOfGamesIds.join(",");*/
-        /*const response = await fetch(
-          `https://api.geekdo.com/xmlapi2/thing?id=` + stringOfGamesIds
-        );
-        const data = await response.text();
-        const clearJson = convert.xml2js(data, { compact: true, spaces: 4 });
-        setCompleteListOfGames(clearJson.items.item);*/
-      } catch (error) {
-        console.error("Getting full list of games by theire ids :", error);
-      }
-    };
-    fetchMoreCompleteListOfGames();
+        console.log("3.complete list of games");
+      };
+      fetchMoreCompleteListOfGames();
+    }
   }, [gamesOwned]);
 
   // cleaning the final list threw filters
   useEffect(() => {
-    // put the owners in the complete list of games
-    try {
-      gamesOwned.forEach((player) => {
-        player.forEach((gameOwned) => {
-          const targetedGame = completeListOfGames.find(
-            (item) => item._attributes.id === gameOwned._attributes.objectid
-          );
-          if (!targetedGame._attributes.owners) {
-            targetedGame._attributes.owners = [];
-          }
-          targetedGame._attributes.owners.push(gameOwned._attributes.owner);
+    if (completeListOfGames.length !== 0) {
+      // put the owners in the complete list of games
+      try {
+        ownedGames.current.forEach((player) => {
+          player.forEach((gameOwned) => {
+            const targetedGame = completeListOfGames.find(
+              (item) => item._attributes.id === gameOwned._attributes.objectid
+            );
+            if (targetedGame !== undefined) {
+              if (targetedGame._attributes.owners === undefined) {
+                targetedGame._attributes.owners = [];
+              } else {
+                targetedGame._attributes.owners.push(
+                  gameOwned._attributes.owner
+                );
+              }
+            }
+          });
         });
-      });
-      completeListOfGames.forEach((game) => {
-        if (game._attributes.type === "boardgameexpansion") {
-          const infos = game.link;
-          const parentGameInfo = infos.find(
-            (info) => info._attributes.inbound === "true"
-          );
-          const parentGame = completeListOfGames.find(
-            (parent) => parent._attributes.id === parentGameInfo._attributes.id
-          );
-          if (
-            parentGame.minplayers._attributes.value >
-            game.minplayers._attributes.value
-          ) {
-            parentGame.minplayers._attributes.value =
-              game.minplayers._attributes.value;
+        completeListOfGames.forEach((game) => {
+          if (game._attributes.type === "boardgameexpansion") {
+            const infos = game.link;
+            const parentGameInfo = infos.find(
+              (info) => info._attributes.inbound === "true"
+            );
+            const parentGame = completeListOfGames.find(
+              (parent) =>
+                parent._attributes.id === parentGameInfo._attributes.id
+            );
+            if (
+              parentGame.minplayers._attributes.value >
+              game.minplayers._attributes.value
+            ) {
+              parentGame.minplayers._attributes.value =
+                game.minplayers._attributes.value;
+            }
+            parentGame.maxplayers._attributes.value =
+              game.maxplayers._attributes.value;
           }
-          parentGame.maxplayers._attributes.value =
-            game.maxplayers._attributes.value;
-        }
-      });
-      const filtered = completeListOfGames.filter(
-        (game) =>
-          game._attributes.type !== "boardgameexpansion" &&
-          game.maxplayers._attributes.value > 3
-      );
-      setDisplayedListOfGames(filtered);
-    } catch (error) {
-      console.error("The to be displayed list of games : ", error);
+        });
+        const filtered = completeListOfGames.filter(
+          (game) =>
+            game._attributes.type !== "boardgameexpansion" &&
+            game.maxplayers._attributes.value > 3
+        );
+        sortByTitles(filtered);
+        setDisplayedListOfGames(filtered);
+      } catch (error) {
+        console.error("The to be displayed list of games : ", error);
+      }
     }
-  }, [completeListOfGames, gamesOwned]);
+  }, [completeListOfGames]);
 
   // ongoing selection of games
   useEffect(() => {
@@ -209,6 +275,8 @@ function Session({ user, setUser }) {
             game._attributes.type !== "boardgameexpansion"
         );
     }
+    sortByTitles(sorted);
+    console.log("4.list to display");
     setDisplayedListOfGames(sorted);
     twoPlayersClicked && setTwoPlayersClicked(false);
     soloGameClicked && setSoloGameClicked(false);
@@ -238,12 +306,13 @@ function Session({ user, setUser }) {
     return doc.documentElement.textContent;
   };
 
-  completeListOfGames &&
-    completeListOfGames.sort(function compare(a, b) {
+  const sortByTitles = (list) => {
+    list.sort(function compare(a, b) {
       if (cleanTitle(a) < cleanTitle(b)) return -1;
       if (cleanTitle(a) > cleanTitle(b)) return 1;
       return 0;
     });
+  };
 
   const firtInList = (elem, pathToValue) => {
     const pathArray = pathToValue.split(".");
@@ -273,8 +342,6 @@ function Session({ user, setUser }) {
           />
           {displayedListOfGames &&
             displayedListOfGames.map((game, index) => (
-              /*completeListOfGames &&
-              completeListOfGames.map((game, index) => (*/
               <GameCard
                 game={game}
                 key={game._attributes.id}
