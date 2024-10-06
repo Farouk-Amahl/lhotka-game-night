@@ -82,12 +82,14 @@
   .gameBlock {
     flex-grow: 0;
     flex-shrink: 0;
-    flex-basis: calc(100% / 2 - 1em / 2 - 2px * 2);
+    flex-basis: calc(100% / 2 - 1em / 2 - 2px);
   }
 }
 
 @media only screen and (max-height: 600px) and (orientation: landscape) {
   .gameBlock {
-    flex: 0 0 calc(100% / 5 - (1em + 2px) / 5 * 4);
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: calc(100% / 5 - 1em / 5 * 4 - 2px);
   }
 }
