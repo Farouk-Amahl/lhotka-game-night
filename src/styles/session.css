@@ -1,18 +1,24 @@
 .sessionContainer {
-  /*margin-top: 9em;*/
   overflow: auto;
 }
 
 .choixNbrJoueurs {
-    position: fixed;
-    right: 0;
-    margin: 1em;
-    width: 4em;
+  position: fixed;
+  right: 0;
+  margin: 1em;
+  width: 4em;
 }
 
 .choixNbrJoueurs button {
-    width: 4em;
-    height: 4em;
-    margin: .5em 0;
-    font-size: 1em;
+  width: 4em;
+  height: 4em;
+  margin: 0.5em 0;
+  font-size: 1em;
+}
+
+.sessionInner {
+  display: flex;
+  gap: 1em;
+  flex-wrap: wrap;
+  padding: 1em;
 }
