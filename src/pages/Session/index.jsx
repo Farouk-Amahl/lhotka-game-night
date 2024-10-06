@@ -1,7 +1,7 @@
 // @ts-nocheck
 import React from "react";
 import GameCard from "../../components/GameCard";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Selection from "../../components/Selection";
 import Options from "../../components/Options";
 import SortingTool from "../../components/SortingTool";
@@ -27,6 +27,14 @@ function Session({ user, setUser }) {
 
   const [twoPlayersClicked, setTwoPlayersClicked] = useState(false);
   const [soloGameClicked, setSoloGameClicked] = useState(false);
+
+  const sortByTitles = useCallback((list) => {
+    list.sort(function compare(a, b) {
+      if (cleanTitle(a) < cleanTitle(b)) return -1;
+      if (cleanTitle(a) > cleanTitle(b)) return 1;
+      return 0;
+    });
+  }, []);
 
   /*useEffect(() => {
   }, []);*/
@@ -220,7 +228,7 @@ function Session({ user, setUser }) {
         console.error("The to be displayed list of games : ", error);
       }
     }
-  }, [completeListOfGames]);
+  }, [completeListOfGames, sortByTitles]);
 
   // ongoing selection of games
   useEffect(() => {
@@ -304,14 +312,6 @@ function Session({ user, setUser }) {
   const htmlDecode = (input) => {
     var doc = new DOMParser().parseFromString(input, "text/html");
     return doc.documentElement.textContent;
-  };
-
-  const sortByTitles = (list) => {
-    list.sort(function compare(a, b) {
-      if (cleanTitle(a) < cleanTitle(b)) return -1;
-      if (cleanTitle(a) > cleanTitle(b)) return 1;
-      return 0;
-    });
   };
 
   const firtInList = (elem, pathToValue) => {
