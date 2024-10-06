@@ -36,8 +36,17 @@ function Session({ user, setUser }) {
     });
   }, []);
 
-  /*useEffect(() => {
-  }, []);*/
+  useEffect(() => {
+    (async () => {
+      const rawResponse = await fetch(
+        "https://gamenightbackend.makak.space//?action=cached"
+      );
+      let content = await rawResponse.json();
+      content = JSON.parse(content);
+      setCompleteListOfGames(content);
+      console.log("Light speed !!!!");
+    })();
+  }, []);
 
   // setting the list of game owners
   useEffect(() => {
