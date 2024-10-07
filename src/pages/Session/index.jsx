@@ -390,7 +390,6 @@ function Session({ user, setUser }) {
           textToDisplay={htmlDecode(gameWithInfo.description._text)}
         />*/}
       </SlidingPane>
-      <span>v2.0.0003</span>
     </>
   );
 }
