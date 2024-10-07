@@ -39,7 +39,7 @@ function Session({ user, setUser }) {
   useEffect(() => {
     (async () => {
       const rawResponse = await fetch(
-        "https://gamenightbackend.makak.space//?action=cached"
+        "https://gamenightbackend.makak.space?action=cached"
       );
       let content = await rawResponse.json();
       content = JSON.parse(content);
@@ -115,7 +115,7 @@ function Session({ user, setUser }) {
             );
             (async () => {
               const rawResponse = await fetch(
-                "https://gamenightbackend.makak.space//?action=cached"
+                "https://gamenightbackend.makak.space?action=cached"
               );
               let content = await rawResponse.json();
               content = JSON.parse(content);
@@ -241,12 +241,16 @@ function Session({ user, setUser }) {
 
   // ongoing selection of games
   useEffect(() => {
-    fetch(`https://lhotka.simplicitas.net/select`)
+    console.log("selected games");
+    fetch(`https://gamenightbackend.makak.space?action=select`)
       .then((res) => {
         return res.json();
       })
       .then((data) => {
         updateSelection(data);
+      })
+      .catch((err) => {
+        console.log("caught it!", err);
       });
   }, []);
 
@@ -341,14 +345,14 @@ function Session({ user, setUser }) {
         />
       </div>
       <div className="sessionContainer">
+        <Options
+          label="Sorting"
+          Content={SortingTool}
+          contentAction={sortingGames}
+          setTwoPlayers={setTwoPlayersClicked}
+          setSoloGames={setSoloGameClicked}
+        />
         <div className="sessionInner">
-          <Options
-            label="Sorting"
-            Content={SortingTool}
-            contentAction={sortingGames}
-            setTwoPlayers={setTwoPlayersClicked}
-            setSoloGames={setSoloGameClicked}
-          />
           {displayedListOfGames &&
             displayedListOfGames.map((game, index) => (
               <GameCard

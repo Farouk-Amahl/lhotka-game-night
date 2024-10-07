@@ -19,7 +19,7 @@ const GameCard = ({
   const addToSelection = () => {
     // console.log(`${userName}, ${gameId}, ${gameImage}`);
     !visit &&
-      fetch("https://lhotka.simplicitas.net/selection", {
+      fetch("https://gamenightbackend.makak.space?action=selection", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -31,7 +31,6 @@ const GameCard = ({
         })
         .then((data) => {
           updateSelection(data);
-          console.log(selection);
         })
         .catch((err) => {
           console.log("caught it!", err);

@@ -32,13 +32,20 @@ function Selection({ selection, updateSelection, userName }) {
       return 0;
     });
     setGameSelected(tempArray);
-    // console.log(selection);
+    console.log("selection: ", tempArray);
+    if (tempArray.length === 0) {
+      tempArray[0] = {
+        id: 0,
+        gameImage: "https://gamenightbackend.makak.space/img/default.jpg",
+        userName: "",
+        nbrChoise: 0,
+      };
+    }
   }, [selection]);
 
   function addToSelection(gameId, gameImage) {
     !visit &&
-      fetch("https://lhotka.simplicitas.net/selection", {
-        // fetch("http://localhost:8000/selection", {
+      fetch("https://gamenightbackend.makak.space?action=selection", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -59,7 +66,7 @@ function Selection({ selection, updateSelection, userName }) {
         gamesSelected.map((game) => (
           <div
             className="blocSelection"
-            key={game.id}
+            key={game.gameId}
             onClick={() => addToSelection(game.gameId, game.gameImage)}
           >
             <div

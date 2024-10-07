@@ -1,5 +1,6 @@
 .sessionContainer {
   overflow: auto;
+  position: relative;
 }
 
 .choixNbrJoueurs {
@@ -21,5 +22,4 @@
   gap: 1em;
   flex-wrap: wrap;
   padding: 1em;
-  position: relative;
 }
