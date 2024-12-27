@@ -1,5 +1,5 @@
 .optionWrapper {
-  position: absolute;
+  position: fixed;
   right: 0;
   z-index: 500;
   text-align: right;

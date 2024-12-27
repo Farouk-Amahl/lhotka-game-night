@@ -2,6 +2,9 @@
   padding: 1em;
   background-color: #eef7eb;
   border-bottom: 6px solid #d5dbdb;
+  position: sticky;
+  top: 0;
+  z-index: 9;
 }
 
 .selection {
@@ -20,6 +23,7 @@
   box-shadow: 1px 1px 5px #c8d2d2;
   position: relative;
   overflow: hidden;
+  min-width: 75px;
 }
 
 .blocSelectionImage {
@@ -66,16 +70,4 @@
 
 .blocSelection:hover .blocSelectionVoters {
   display: flex;
-}
-
-@media screen and (max-width: 600px) {
-  .blocSelection {
-    width: calc(100% / 4 - 1em / 4 * 3 - 2px);
-  }
-}
-
-@media only screen and (max-height: 600px) and (orientation: landscape) {
-  .blocSelection {
-    width: calc(100% / 10 - 1em / 10 * 9 - 2px);
-  }
 }

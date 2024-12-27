@@ -1,5 +1,3 @@
-// @ts-nocheck
-import React from "react";
 import GameCard from "../../components/GameCard";
 import { useState, useEffect, useRef, useCallback } from "react";
 import Selection from "../../components/Selection";
@@ -10,8 +8,9 @@ import convert from "xml-js";
 import SlidingPane from "react-sliding-pane";
 import NiceList from "../../components/NiceList";
 /* import ExpandableText from "../../components/ExpandableText";*/
-// import "react-sliding-pane/dist/react-sliding-pane.css";
-// import "../../styles/customSlidingPane.css";
+
+const BACKEND_URL = "https://gamenightbackend.makak.space";
+const API_URL = "https://api.geekdo.com/xmlapi2";
 
 function Session({ user, setUser }) {
   const [gameOwnersList, setGameOwnersList] = useState([]);
@@ -38,9 +37,7 @@ function Session({ user, setUser }) {
 
   useEffect(() => {
     (async () => {
-      const rawResponse = await fetch(
-        "https://gamenightbackend.makak.space?action=cached"
-      );
+      const rawResponse = await fetch(BACKEND_URL+"?action=cached");
       let content = await rawResponse.json();
       content = JSON.parse(content);
       setCompleteListOfGames(content);
@@ -60,7 +57,7 @@ function Session({ user, setUser }) {
       const fetchAllPlayersLists = async () => {
         const requests = gameOwnersList.map(async (player) => {
           const response = await fetch(
-            `https://api.geekdo.com/xmlapi2/collection?username=${player}`
+            `${API_URL}/collection?username=${player}`
           );
           const data = await response.text();
           const clearJson = convert.xml2js(data, { compact: true, spaces: 4 });
@@ -114,9 +111,7 @@ function Session({ user, setUser }) {
               "2,1.checking if the data is already loaded the response is yes"
             );
             (async () => {
-              const rawResponse = await fetch(
-                "https://gamenightbackend.makak.space?action=cached"
-              );
+              const rawResponse = await fetch(BACKEND_URL+"?action=cached");
               let content = await rawResponse.json();
               content = JSON.parse(content);
               setCompleteListOfGames(content);
@@ -138,7 +133,7 @@ function Session({ user, setUser }) {
                   const chunk = stringOfGamesIds[i];
                   chunk.join(",");
                   const response = await fetch(
-                    `https://api.geekdo.com/xmlapi2/thing?id=` + chunk
+                    `${API_URL}/thing?id=${chunk}`
                   );
                   const data = await response.text();
                   const clearJson = convert.xml2js(data, {
@@ -150,7 +145,7 @@ function Session({ user, setUser }) {
 
                 (async () => {
                   const rawResponse = await fetch(
-                    "https://gamenightbackend.makak.space/?action=cache",
+                    BACKEND_URL + "?action=cache",
                     {
                       method: "POST",
                       headers: {
@@ -227,9 +222,7 @@ function Session({ user, setUser }) {
           }
         });
         const filtered = completeListOfGames.filter(
-          (game) =>
-            game._attributes.type !== "boardgameexpansion" &&
-            game.maxplayers._attributes.value > 3
+          game => game._attributes.type !== "boardgameexpansion"
         );
         sortByTitles(filtered);
         setDisplayedListOfGames(filtered);
@@ -242,7 +235,7 @@ function Session({ user, setUser }) {
   // ongoing selection of games
   useEffect(() => {
     console.log("selected games");
-    fetch(`https://gamenightbackend.makak.space?action=select`)
+    fetch(`${BACKEND_URL}?action=select`)
       .then((res) => {
         return res.json();
       })
@@ -260,24 +253,19 @@ function Session({ user, setUser }) {
       case "solo":
         soloGameClicked
           ? (sorted = completeListOfGames.filter(
-              (game) =>
-                game.minplayers._attributes.value * 1 === 1 &&
-                game.maxplayers._attributes.value * 1 === 1 &&
-                game._attributes.type !== "boardgameexpansion"
+              (game) => game._attributes.type !== "boardgameexpansion"
             ))
           : (sorted = completeListOfGames.filter(
               (game) =>
                 game.minplayers._attributes.value * 1 === 1 &&
+                game.maxplayers._attributes.value * 1 === 1 &&
                 game._attributes.type !== "boardgameexpansion"
             ));
         break;
       case "two players":
         twoPlayersClicked
           ? (sorted = completeListOfGames.filter(
-              (game) =>
-                game.minplayers._attributes.value * 1 === 2 &&
-                game.maxplayers._attributes.value * 1 === 2 &&
-                game._attributes.type !== "boardgameexpansion"
+              (game) => game._attributes.type !== "boardgameexpansion"
             ))
           : (sorted = completeListOfGames.filter(
               (game) =>
@@ -288,6 +276,7 @@ function Session({ user, setUser }) {
         break;
       case "number":
         break;
+      case "":
       default:
         sorted = completeListOfGames.filter(
           (game) =>
@@ -373,7 +362,21 @@ function Session({ user, setUser }) {
               />
             ))}
         </div>
+        <p
+          style={{
+            color: "white",
+            fontSize: "0.8em",
+            textAlign: "center",
+            padding: "1em",
+            opacity: 0.8
+          }}>
+            {displayedListOfGames.length > 0
+              ? `Displaying ${displayedListOfGames.length} of ${completeListOfGames.length} total games and their expansions.`
+              : "Loading..."
+            }
+        </p>
       </div>
+
       <SlidingPane
         className="theSlidingPane"
         overlayClassName="some-custom-overlay-class"
@@ -383,16 +386,12 @@ function Session({ user, setUser }) {
           gameWithInfo.name &&
             firtInList(gameWithInfo.name, "_attributes.value")
         )}
-        subtitle="Optional subtitle."
-        onRequestClose={() => {
-          // triggered on "<" on left top click or on outside click
-          setPaneState(false);
-        }}
+        onRequestClose={() => setPaneState(false)}
       >
-        <NiceList list={gameWithInfo.link} />
-        {/*<ExpandableText
-          textToDisplay={htmlDecode(gameWithInfo.description._text)}
-        />*/}
+        <img src={gameWithInfo?.image?._text} alt="" style={{maxWidth: "100%"}} />
+        <em><NiceList list={gameWithInfo.link} type="boardgamecategory" /></em>
+        <div className="slide-pane__description">{htmlDecode(gameWithInfo?.description?._text)}</div>
+        <NiceList list={gameWithInfo.link} type="boardgamemechanic" />
       </SlidingPane>
     </>
   );

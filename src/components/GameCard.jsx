@@ -1,6 +1,4 @@
-import React from "react";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
-/*import clear from "../utils/clear";*/
 import GameSpecs from "./GameSpecs";
 import "../styles/GameCard.css";
 
@@ -54,7 +52,6 @@ const GameCard = ({
       </div>
       <div className="gameInfosBlock" onClick={() => showPane(index)}>
         <div className="gameTitle">{title}</div>
-        <div className="viewMore">View more...</div>
         <GameSpecs game={game} />
       </div>
     </div>

@@ -1,10 +1,7 @@
-import React from "react";
 import "../styles/NiceList.css";
 
-const NiceList = ({ list }) => {
-  const myNiceList = list.filter((game) => {
-    return game._attributes.type === "boardgamemechanic";
-  });
+const NiceList = ({ list, type = "boardgamemechanic"}) => {
+  const myNiceList = list.filter(game => game._attributes.type === type);
   return (
     <div className="niceListContainer">
       <div className="niceList">
