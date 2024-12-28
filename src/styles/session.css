@@ -24,9 +24,23 @@
   padding: 3em;
 }
 
+@media screen and (max-width: 1200px) {
+ .sessionInner {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    padding: 2em;
+  } 
+}
+
 @media screen and (max-width: 900px) {
  .sessionInner {
     grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
     padding: 1em;
   } 
+}
+
+@media only screen and (max-height: 600px) and (orientation: landscape) {
+  .sessionInner {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    padding: 1em;
+  }
 }
