@@ -63,10 +63,10 @@ function Selection({ selection, updateSelection, userName }) {
   return (
     <div className="selection">
       {selection &&
-        gamesSelected.map((game) => (
+        gamesSelected.map((game, index) => (
           <div
             className="blocSelection"
-            key={game.gameId}
+            key={game.gameId + index}
             onClick={() => addToSelection(game.gameId, game.gameImage)}
           >
             <div
