@@ -163,7 +163,7 @@ body {
   background-image: url("./assets/logoNeons.png");
   background-repeat: no-repeat;
   background-size: auto 50%;
-  background-position: center;
+  background-position: center 39%;
   display: flex;
   height: 100%;
 }

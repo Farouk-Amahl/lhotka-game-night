@@ -1,7 +1,7 @@
 .divTextHome {
   position: absolute;
   color: #a7e3a7;
-  top: 75vh;
+  bottom: 0;
   left: calc(50vw - 125px);
   width: 250px;
   height: 155px;
@@ -11,10 +11,6 @@
   font-family: "Kumar One", serif;
   font-weight: 400;
   font-style: normal;
-}
-
-.textHomeText {
-  /*padding: 0.5em;*/
 }
 
 .textHomeCountdown .designation {
