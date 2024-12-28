@@ -280,7 +280,6 @@ function Session({ user, setUser }) {
           : (sorted = completeListOfGames.filter(
               (game) =>
                 game.minplayers._attributes.value * 1 === 1 &&
-                game.maxplayers._attributes.value * 1 === 1 &&
                 game._attributes.type !== "boardgameexpansion"
             ));
         break;
@@ -291,8 +290,7 @@ function Session({ user, setUser }) {
             ))
           : (sorted = completeListOfGames.filter(
               (game) =>
-                game.minplayers._attributes.value * 1 < 3 &&
-                game.maxplayers._attributes.value * 1 > 1 &&
+                game.minplayers._attributes.value * 1 === 2 &&
                 game._attributes.type !== "boardgameexpansion"
             ));
         break;
@@ -302,7 +300,6 @@ function Session({ user, setUser }) {
       default:
         sorted = completeListOfGames.filter(
           (game) =>
-            game.minplayers._attributes.value * 1 <= sort &&
             game.maxplayers._attributes.value * 1 >= sort &&
             game._attributes.type !== "boardgameexpansion"
         );
@@ -336,6 +333,12 @@ function Session({ user, setUser }) {
   const htmlDecode = (input) => {
     var doc = new DOMParser().parseFromString(input, "text/html");
     return doc.documentElement.textContent;
+  };
+
+  const closePane = () => {
+    infoPane.current.style.transition = 'transform 200ms ease-out';
+    infoPane.current.style.transform = `translateX(100%)`;
+    setTimeout(() => setPaneState(false), 400);
   };
 
   const firstInList = (elem, pathToValue) => {
@@ -384,42 +387,41 @@ function Session({ user, setUser }) {
               />
             ))}
         </div>
-        <p
-          style={{
-            color: "white",
-            fontSize: "0.8em",
-            textAlign: "center",
-            padding: "1em",
-            opacity: 0.8
-          }}>
-            {displayedListOfGames.length > 0
-              ? `Displaying ${displayedListOfGames.length} of ${completeListOfGames.length} total fetched games and expansions.`
-              : "Loading..."
-            }
+        <p className="bonz">
+          {displayedListOfGames.length > 0
+            ? `Displaying ${displayedListOfGames.length} of ${completeListOfGames.length} total fetched games and expansions.`
+            : "Loading..."
+          }
         </p>
       </div>
 
       {paneState &&
-        <div className="slide-pane__overlay slide-pane" ref={infoPane} {...swipeHandlers}>
-          <div
-            className="slide-pane__close"
-            role="button"
-            tabIndex="0"
-            onClick={() => {
-              infoPane.current.style.transition = 'transform 200ms ease-out';
-              infoPane.current.style.transform = `translateX(100%)`;
-              setTimeout(() => setPaneState(false), 400);
-            }}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 13 22"><path fill="currentColor" fillRule="evenodd" d="M4 11l8 8c.6.5.6 1.5 0 2-.5.6-1.5.6-2 0l-9-9c-.6-.5-.6-1.5 0-2l9-9c.5-.6 1.5-.6 2 0 .6.5.6 1.5 0 2l-8 8z"></path></svg>
+        <div
+          ref={infoPane}
+          className="slide-pane__overlay"
+          onClick={closePane}
+          {...swipeHandlers}
+        >
+          <div className="slide-pane" onClick={e => e.stopPropagation()}>
+            <div
+              className="slide-pane__close"
+              role="button"
+              tabIndex="0"
+              onClick={closePane}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 13 22"><path fill="currentColor" fillRule="evenodd" d="M4 11l8 8c.6.5.6 1.5 0 2-.5.6-1.5.6-2 0l-9-9c-.6-.5-.6-1.5 0-2l9-9c.5-.6 1.5-.6 2 0 .6.5.6 1.5 0 2l-8 8z"></path></svg>
+            </div>
+            <h2 className="slide-pane__title">
+              {htmlDecode(gameWithInfo.name && firstInList(gameWithInfo.name, "_attributes.value"))}
+            </h2>
+            {/* gameWithInfo._attributes.id */}
+            <img src={gameWithInfo?.image?._text} alt="" style={{maxWidth: "100%"}} />
+            <em><NiceList list={gameWithInfo.link} type="boardgamecategory" /></em>
+            <div className="slide-pane__description">
+              { htmlDecode(gameWithInfo?.description?._text) }
+            </div>
+            <NiceList list={gameWithInfo.link} type="boardgamemechanic" />
           </div>
-          <h2 className="slide-pane__title">
-            {htmlDecode(gameWithInfo.name && firstInList(gameWithInfo.name, "_attributes.value"))}
-          </h2>
-          <img src={gameWithInfo?.image?._text} alt="" style={{maxWidth: "100%"}} />
-          <em><NiceList list={gameWithInfo.link} type="boardgamecategory" /></em>
-          <div className="slide-pane__description">{htmlDecode(gameWithInfo?.description?._text)}</div>
-          <NiceList list={gameWithInfo.link} type="boardgamemechanic" />
         </div>
       }
     </>

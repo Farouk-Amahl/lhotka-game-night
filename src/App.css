@@ -233,6 +233,14 @@ body {
   }
 }
 
+.bonz {
+  color: white;
+  font-size: 0.8em;
+  text-align: center;
+  padding: 1em;
+  opacity: 0.8;
+}
+
 /* Slide panel */
 @keyframes easeIn {
   0% { transform: translateX(100%) }
@@ -252,33 +260,51 @@ body {
   top: 0;
   padding: 2em;
 }
+
 .slide-pane__close svg {
   width: 24px;
   height: 24px;
   rotate: 180deg;
 }
+
+/* Either set inset spacing here or left margin below,
+depending if panel should close on click outside. */
 .slide-pane__overlay {
   position: absolute;
   z-index: 999;
-  inset: 0 0 0 33%;
+  /* inset: 0 0 0 33%; */
+  inset: 0;
+}
+
+.slide-pane {
+  margin-left: 33%;
   background: #fffe;
   padding: 3em;
   overflow: auto;
+  min-height: 100%;
 }
-.slide-pane__description {
-  white-space: break-spaces;
-}
+
 .slide-pane img {
   max-width: 100%;
   width: 300px;
   float: right;
   padding: 0 0 1em 1em;
 }
+
+.slide-pane__description {
+  white-space: break-spaces;
+}
+
 .slide-pane:focus {
   outline: none;
 }
+
 @media screen and (max-width: 1100px) {
   .slide-pane__overlay {
     inset: 0;
+  }
+
+  .slide-pane {
+    margin-left: 0;
   }
 }

@@ -11,18 +11,25 @@ function SortingTool({
   autoClose,
 }) {
   const [clicked, setClicked] = useState("");
+  const [minPlayers, setMinPlayers] = useState(1);
 
   const checkHandler = (choise) => {
     choise === "two players" && setTwoPlayers(true);
     choise === "solo" && setSoloGames(true);
     sortByNbrPlayers(choise);
-    clicked === choise ? setClicked("") : setClicked(choise);
+    if (clicked === choise) {
+      setClicked("")
+      setMinPlayers(1);
+    } else {
+      setClicked(choise);
+      setMinPlayers(0);
+    }
     autoClose();
   };
 
   return (
     <>
-      <div className="sotingTool">
+      <div className="sotingTool" onMouseOver={() => autoClose()}>
         <div className="buttonGroup">
           <button
             className="sortGamesButtons"
@@ -42,18 +49,24 @@ function SortingTool({
             {clicked === "two players" && `}`}
           </button>
         </div>
-        <input
-          type="range"
-          id="nbrPlayersMax"
-          min="3"
-          max="10"
-          step="1"
-          defaultValue="5"
-          onChange={(e) => {
-            sortByNbrPlayers(e.target.value);
-            autoClose();
-          }}
-        />
+        <div className="inputGroup">
+          <input
+            title="Minimum players"
+            type="range"
+            id="nbrPlayersMax"
+            min="1"
+            max="9"
+            step="1"
+            value={minPlayers}
+            onChange={(e) => {
+              setClicked("");
+              setMinPlayers(e.target.value);
+              sortByNbrPlayers(e.target.value);
+              autoClose();
+            }}
+          />
+          <span>{minPlayers > 0 ? minPlayers : "Ø"}</span>
+        </div>
       </div>
     </>
   );
