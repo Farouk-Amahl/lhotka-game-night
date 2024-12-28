@@ -1,3 +1,4 @@
+import useSwipe from "../../utils/useSwipe";
 import GameCard from "../../components/GameCard";
 import { useState, useEffect, useRef, useCallback } from "react";
 import Selection from "../../components/Selection";
@@ -5,9 +6,7 @@ import Options from "../../components/Options";
 import SortingTool from "../../components/SortingTool";
 import "../../styles/session.css";
 import convert from "xml-js";
-import SlidingPane from "react-sliding-pane";
 import NiceList from "../../components/NiceList";
-/* import ExpandableText from "../../components/ExpandableText";*/
 
 const BACKEND_URL = "https://gamenightbackend.makak.space";
 const API_URL = "https://api.geekdo.com/xmlapi2";
@@ -16,6 +15,7 @@ function Session({ user, setUser }) {
   const [gameOwnersList, setGameOwnersList] = useState([]);
   const [gamesOwned, setGamesOwned] = useState([]);
   const ownedGames = useRef([]);
+  const infoPane = useRef(HTMLDivElement)
   const [completeListOfGames, setCompleteListOfGames] = useState([]);
   const [displayedListOfGames, setDisplayedListOfGames] = useState([]);
 
@@ -26,6 +26,28 @@ function Session({ user, setUser }) {
 
   const [twoPlayersClicked, setTwoPlayersClicked] = useState(false);
   const [soloGameClicked, setSoloGameClicked] = useState(false);
+
+  const swipeHandlers = useSwipe({
+    onSwipedLeft: () => {},
+    onSwipedRight: () => {
+      infoPane.current.style.transform = 'translateX(100%)';
+      infoPane.current.style.transition = 'transform 200ms ease-out';
+      setTimeout(() => setPaneState(false), 400);
+    },
+    onSwiping: (e) => {
+      if (infoPane.current && e.dir === 'Right') {
+        const translateX = Math.min(e.absX, window.innerWidth);
+        infoPane.current.style.transform = `translateX(${translateX}px)`;
+        infoPane.current.style.transition = 'none';
+      }
+    },
+    onSwipeEnd: () => {
+      if (infoPane.current) {
+        infoPane.current.style.transform = '';
+        infoPane.current.style.transition = '';
+      }
+    }
+  });
 
   const sortByTitles = useCallback((list) => {
     list.sort(function compare(a, b) {
@@ -316,7 +338,7 @@ function Session({ user, setUser }) {
     return doc.documentElement.textContent;
   };
 
-  const firtInList = (elem, pathToValue) => {
+  const firstInList = (elem, pathToValue) => {
     const pathArray = pathToValue.split(".");
     return pathArray.reduce(
       (acc, curr) => acc && acc[curr],
@@ -371,28 +393,35 @@ function Session({ user, setUser }) {
             opacity: 0.8
           }}>
             {displayedListOfGames.length > 0
-              ? `Displaying ${displayedListOfGames.length} of ${completeListOfGames.length} total games and their expansions.`
+              ? `Displaying ${displayedListOfGames.length} of ${completeListOfGames.length} total fetched games and expansions.`
               : "Loading..."
             }
         </p>
       </div>
 
-      <SlidingPane
-        className="theSlidingPane"
-        overlayClassName="some-custom-overlay-class"
-        width="100%"
-        isOpen={paneState}
-        title={htmlDecode(
-          gameWithInfo.name &&
-            firtInList(gameWithInfo.name, "_attributes.value")
-        )}
-        onRequestClose={() => setPaneState(false)}
-      >
-        <img src={gameWithInfo?.image?._text} alt="" style={{maxWidth: "100%"}} />
-        <em><NiceList list={gameWithInfo.link} type="boardgamecategory" /></em>
-        <div className="slide-pane__description">{htmlDecode(gameWithInfo?.description?._text)}</div>
-        <NiceList list={gameWithInfo.link} type="boardgamemechanic" />
-      </SlidingPane>
+      {paneState &&
+        <div className="slide-pane__overlay slide-pane" ref={infoPane} {...swipeHandlers}>
+          <div
+            className="slide-pane__close"
+            role="button"
+            tabIndex="0"
+            onClick={() => {
+              infoPane.current.style.transition = 'transform 200ms ease-out';
+              infoPane.current.style.transform = `translateX(100%)`;
+              setTimeout(() => setPaneState(false), 400);
+            }}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 13 22"><path fill="currentColor" fillRule="evenodd" d="M4 11l8 8c.6.5.6 1.5 0 2-.5.6-1.5.6-2 0l-9-9c-.6-.5-.6-1.5 0-2l9-9c.5-.6 1.5-.6 2 0 .6.5.6 1.5 0 2l-8 8z"></path></svg>
+          </div>
+          <h2 className="slide-pane__title">
+            {htmlDecode(gameWithInfo.name && firstInList(gameWithInfo.name, "_attributes.value"))}
+          </h2>
+          <img src={gameWithInfo?.image?._text} alt="" style={{maxWidth: "100%"}} />
+          <em><NiceList list={gameWithInfo.link} type="boardgamecategory" /></em>
+          <div className="slide-pane__description">{htmlDecode(gameWithInfo?.description?._text)}</div>
+          <NiceList list={gameWithInfo.link} type="boardgamemechanic" />
+        </div>
+      }
     </>
   );
 }

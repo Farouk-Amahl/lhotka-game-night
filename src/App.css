@@ -234,6 +234,15 @@ body {
 }
 
 /* Slide panel */
+@keyframes easeIn {
+  0% { transform: translateX(100%) }
+  100% { transform: translateX(0%) }
+}
+.slide-pane {
+  transition: transform 0.3s ease-out;
+  animation: easeIn 0.15s ease-in;
+}
+
 .slide-pane__title {
   margin-bottom: 1rem;
 }

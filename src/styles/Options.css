@@ -11,7 +11,7 @@
 
 .optionLabel {
   background: #d5dbdb;
-  padding: 1em;
+  padding: 0.5em 1em;
   display: inline-flex;
   border-radius: 0px 0px 5px 15px;
 }
