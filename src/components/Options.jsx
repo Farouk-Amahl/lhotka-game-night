@@ -14,7 +14,7 @@ const Options = ({
     actioned && clearTimeout(actioned);
     const toId = setTimeout(() => {
       setOpened("");
-    }, 1980);
+    }, 2400);
     setActioned(toId);
     setOpened("open");
   };

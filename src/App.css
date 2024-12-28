@@ -89,6 +89,7 @@ video {
   border: 0;
   vertical-align: baseline;
 }
+
 /* HTML5 display-role reset for older browsers */
 article,
 aside,
@@ -103,17 +104,21 @@ nav,
 section {
   display: block;
 }
+
 body {
   line-height: 1;
 }
+
 ol,
 ul {
   list-style: none;
 }
+
 blockquote,
 q {
   quotes: none;
 }
+
 blockquote:before,
 blockquote:after,
 q:before,
@@ -121,6 +126,7 @@ q:after {
   content: "";
   content: none;
 }
+
 table {
   border-collapse: collapse;
   border-spacing: 0;
@@ -206,6 +212,7 @@ body {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -243,9 +250,15 @@ body {
 
 /* Slide panel */
 @keyframes easeIn {
-  0% { transform: translateX(100%) }
-  100% { transform: translateX(0%) }
+  0% {
+    transform: translateX(100%)
+  }
+
+  100% {
+    transform: translateX(0%)
+  }
 }
+
 .slide-pane {
   transition: transform 0.3s ease-out;
   animation: easeIn 0.15s ease-in;
@@ -254,11 +267,19 @@ body {
 .slide-pane__title {
   margin-bottom: 1rem;
 }
+
 .slide-pane__close {
   position: absolute;
   right: 0;
   top: 0;
-  padding: 2em;
+  padding: 1em;
+  background-clip: padding-box;
+  border: 1em transparent solid;
+  border-radius: 50%;
+
+  &:hover {
+    background-color: #fff;
+  }
 }
 
 .slide-pane__close svg {
@@ -280,8 +301,8 @@ depending if panel should close on click outside. */
   margin-left: 33%;
   background: #fffe;
   padding: 3em;
+  height: calc(100% - 6em);
   overflow: auto;
-  min-height: 100%;
 }
 
 .slide-pane img {
