@@ -290,7 +290,8 @@ function Session({ user, setUser }) {
             ))
           : (sorted = completeListOfGames.filter(
               (game) =>
-                game.minplayers._attributes.value * 1 === 2 &&
+                game.minplayers._attributes.value * 1 <= 2 &&
+                game.maxplayers._attributes.value * 1 >= 2 &&
                 game._attributes.type !== "boardgameexpansion"
             ));
         break;
