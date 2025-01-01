@@ -1,6 +1,6 @@
 import useSwipe from "../../utils/useSwipe";
 import GameCard from "../../components/GameCard";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import Selection from "../../components/Selection";
 import Options from "../../components/Options";
 import SortingTool from "../../components/SortingTool";
@@ -10,30 +10,25 @@ import NiceList from "../../components/NiceList";
 
 const BACKEND_URL = "https://makak.space/gamenightbackend/";
 const API_URL = "https://api.geekdo.com/xmlapi2";
+const PREFIXES = ['The ', 'A '];
 
 function Session({ user, setUser }) {
   const [gameOwnersList, setGameOwnersList] = useState([]);
   const [gamesOwned, setGamesOwned] = useState([]);
-  const ownedGames = useRef([]);
-  const infoPane = useRef(HTMLDivElement);
   const [completeListOfGames, setCompleteListOfGames] = useState([]);
   const [displayedListOfGames, setDisplayedListOfGames] = useState([]);
-
-  const currentUser = sessionStorage.getItem("userName");
   const [selection, updateSelection] = useState([]);
-  const [paneState, setPaneState] = useState(false);
-  const [gameWithInfo, setGameWithInfo] = useState({});
-
+  const [gameWithInfo, setGameWithInfo] = useState({}); 
   const [twoPlayersClicked, setTwoPlayersClicked] = useState(false);
   const [soloGameClicked, setSoloGameClicked] = useState(false);
 
+  const ownedGames = useRef([]);
+  const infoPane = useRef(HTMLDivElement);
+  const currentUser = useMemo(() => sessionStorage.getItem("userName"), []);
+
   const swipeHandlers = useSwipe({
     onSwipedLeft: () => {},
-    onSwipedRight: () => {
-      infoPane.current.style.transform = "translateX(100%)";
-      infoPane.current.style.transition = "transform 200ms ease-out";
-      setTimeout(() => setPaneState(false), 400);
-    },
+    onSwipedRight: () => closePane(),
     onSwiping: (e) => {
       if (infoPane.current && e.dir === "Right") {
         const translateX = Math.min(e.absX, window.innerWidth);
@@ -49,21 +44,20 @@ function Session({ user, setUser }) {
     },
   });
 
-  const sortByTitles = useCallback((list) => {
-    list.sort(function compare(a, b) {
-      if (cleanTitle(a) < cleanTitle(b)) return -1;
-      if (cleanTitle(a) > cleanTitle(b)) return 1;
-      return 0;
-    });
-  }, []);
+  const sortByTitles = useCallback(list =>
+    list.sort((a, b) => cleanTitle(a).localeCompare(cleanTitle(b))),
+    []
+  );
 
   useEffect(() => {
     (async () => {
+      const label = "Light speed !!!!";
+      console.time(label)
       const rawResponse = await fetch(BACKEND_URL + "?action=cached");
       let content = await rawResponse.json();
       content = JSON.parse(content);
       setCompleteListOfGames(content);
-      console.log("Light speed !!!!");
+      console.timeEnd(label);
     })();
   }, []);
 
@@ -267,77 +261,63 @@ function Session({ user, setUser }) {
       });
   }, []);
 
-  const sortingGames = (sort) => {
+  const sortingGames = useCallback((sort) => {
     let sorted = [];
+    const list = [...completeListOfGames]
+      .filter(game => game._attributes.type !== "boardgameexpansion");
+
     switch (sort) {
       case "solo":
         soloGameClicked
-          ? (sorted = completeListOfGames.filter(
-              (game) => game._attributes.type !== "boardgameexpansion"
-            ))
-          : (sorted = completeListOfGames.filter(
+          ? (sorted = list)
+          : (sorted = list.filter(
               (game) =>
-                game.minplayers._attributes.value * 1 === 1 &&
-                game._attributes.type !== "boardgameexpansion"
+                game.minplayers._attributes.value * 1 === 1
             ));
         break;
       case "two players":
         twoPlayersClicked
-          ? (sorted = completeListOfGames.filter(
-              (game) => game._attributes.type !== "boardgameexpansion"
-            ))
-          : (sorted = completeListOfGames.filter(
+          ? (sorted = list)
+          : (sorted = list.filter(
               (game) =>
                 game.minplayers._attributes.value * 1 <= 2 &&
-                game.maxplayers._attributes.value * 1 >= 2 &&
-                game._attributes.type !== "boardgameexpansion"
+                game.maxplayers._attributes.value * 1 >= 2
             ));
         break;
       case "number":
         break;
       case "":
       default:
-        sorted = completeListOfGames.filter(
-          (game) =>
-            game.maxplayers._attributes.value * 1 >= sort &&
-            game._attributes.type !== "boardgameexpansion"
-        );
+        sorted = list.filter(game => game.maxplayers._attributes.value * 1 >= sort);
     }
     sortByTitles(sorted);
     console.log("4.list to display");
     setDisplayedListOfGames(sorted);
     twoPlayersClicked && setTwoPlayersClicked(false);
     soloGameClicked && setSoloGameClicked(false);
-  };
+  }, [completeListOfGames, soloGameClicked, sortByTitles, twoPlayersClicked]);
 
   const cleanTitle = (x) => {
-    const titre = x.name[0]
-      ? x.name[0]._attributes.value
-      : x.name._attributes.value;
-    let newTitle = "";
-    titre.indexOf("The ") === 0
-      ? (newTitle = titre.slice(4))
-      : titre.indexOf("A ") === 0
-      ? (newTitle = titre.slice(2))
-      : (newTitle = titre);
-    return newTitle;
+    const title = x.name[0]?._attributes.value || x.name._attributes.value;
+    const matchingPrefix = PREFIXES.find(prefix => title.startsWith(prefix));
+    return matchingPrefix ? title.slice(matchingPrefix.length) : title;
   };
 
   const setThePane = (gameIndex) => {
-    setGameWithInfo(displayedListOfGames.at(gameIndex));
-    setPaneState(true);
-    console.log(gameWithInfo);
+    const gameInfo = displayedListOfGames.at(gameIndex);
+    setGameWithInfo(gameInfo);
+    console.log(gameInfo);
   };
 
   const htmlDecode = (input) => {
-    var doc = new DOMParser().parseFromString(input, "text/html");
+    const doc = new DOMParser().parseFromString(input, "text/html");
     return doc.documentElement.textContent;
   };
 
   const closePane = () => {
     infoPane.current.style.transition = "transform 200ms ease-out";
     infoPane.current.style.transform = `translateX(100%)`;
-    setTimeout(() => setPaneState(false), 400);
+    setTimeout(() => setGameWithInfo({}), 400);
   };
 
   const firstInList = (elem, pathToValue) => {
@@ -393,7 +373,7 @@ function Session({ user, setUser }) {
         </p>
       </div>
 
-      {paneState && (
+      {gameWithInfo?.name && (
         <div
           ref={infoPane}
           className="slide-pane__overlay"
