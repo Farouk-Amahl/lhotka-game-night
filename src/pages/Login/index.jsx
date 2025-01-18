@@ -23,7 +23,7 @@ function Login({ setToken, user, setUser }) {
   };
 
   async function loginUser(credentials) {
-    return fetch("https://gamenightbackend.makak.space?action=login", {
+    return fetch("https://makak.space/gamenightbackend?action=login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

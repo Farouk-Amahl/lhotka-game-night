@@ -36,7 +36,7 @@ function Selection({ selection, updateSelection, userName }) {
     if (tempArray.length === 0) {
       tempArray[0] = {
         id: 0,
-        gameImage: "https://gamenightbackend.makak.space/img/default.jpg",
+        gameImage: "https://makak.space/gamenightbackend/img/default.jpg",
         userName: "",
         nbrChoise: 0,
       };
@@ -45,7 +45,7 @@ function Selection({ selection, updateSelection, userName }) {
 
   function addToSelection(gameId, gameImage) {
     !visit &&
-      fetch("https://gamenightbackend.makak.space?action=selection", {
+      fetch("https://makak.space/gamenightbackend?action=selection", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

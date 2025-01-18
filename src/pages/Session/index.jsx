@@ -8,7 +8,7 @@ import "../../styles/session.css";
 import convert from "xml-js";
 import NiceList from "../../components/NiceList";
 
-const BACKEND_URL = "https://gamenightbackend.makak.space";
+const BACKEND_URL = "https://makak.space/gamenightbackend";
 const API_URL = "https://api.geekdo.com/xmlapi2";
 
 function Session({ user, setUser }) {
