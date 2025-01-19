@@ -8,14 +8,14 @@ import "../../styles/session.css";
 import convert from "xml-js";
 import NiceList from "../../components/NiceList";
 
-const BACKEND_URL = "https://makak.space/gamenightbackend";
+const BACKEND_URL = "https://makak.space/gamenightbackend/";
 const API_URL = "https://api.geekdo.com/xmlapi2";
 
 function Session({ user, setUser }) {
   const [gameOwnersList, setGameOwnersList] = useState([]);
   const [gamesOwned, setGamesOwned] = useState([]);
   const ownedGames = useRef([]);
-  const infoPane = useRef(HTMLDivElement)
+  const infoPane = useRef(HTMLDivElement);
   const [completeListOfGames, setCompleteListOfGames] = useState([]);
   const [displayedListOfGames, setDisplayedListOfGames] = useState([]);
 
@@ -30,23 +30,23 @@ function Session({ user, setUser }) {
   const swipeHandlers = useSwipe({
     onSwipedLeft: () => {},
     onSwipedRight: () => {
-      infoPane.current.style.transform = 'translateX(100%)';
-      infoPane.current.style.transition = 'transform 200ms ease-out';
+      infoPane.current.style.transform = "translateX(100%)";
+      infoPane.current.style.transition = "transform 200ms ease-out";
       setTimeout(() => setPaneState(false), 400);
     },
     onSwiping: (e) => {
-      if (infoPane.current && e.dir === 'Right') {
+      if (infoPane.current && e.dir === "Right") {
         const translateX = Math.min(e.absX, window.innerWidth);
         infoPane.current.style.transform = `translateX(${translateX}px)`;
-        infoPane.current.style.transition = 'none';
+        infoPane.current.style.transition = "none";
       }
     },
     onSwipeEnd: () => {
       if (infoPane.current) {
-        infoPane.current.style.transform = '';
-        infoPane.current.style.transition = '';
+        infoPane.current.style.transform = "";
+        infoPane.current.style.transition = "";
       }
-    }
+    },
   });
 
   const sortByTitles = useCallback((list) => {
@@ -59,7 +59,7 @@ function Session({ user, setUser }) {
 
   useEffect(() => {
     (async () => {
-      const rawResponse = await fetch(BACKEND_URL+"?action=cached");
+      const rawResponse = await fetch(BACKEND_URL + "?action=cached");
       let content = await rawResponse.json();
       content = JSON.parse(content);
       setCompleteListOfGames(content);
@@ -133,7 +133,7 @@ function Session({ user, setUser }) {
               "2,1.checking if the data is already loaded the response is yes"
             );
             (async () => {
-              const rawResponse = await fetch(BACKEND_URL+"?action=cached");
+              const rawResponse = await fetch(BACKEND_URL + "?action=cached");
               let content = await rawResponse.json();
               content = JSON.parse(content);
               setCompleteListOfGames(content);
@@ -154,9 +154,7 @@ function Session({ user, setUser }) {
                 for (let i = 0; i < stringOfGamesIds.length; i++) {
                   const chunk = stringOfGamesIds[i];
                   chunk.join(",");
-                  const response = await fetch(
-                    `${API_URL}/thing?id=${chunk}`
-                  );
+                  const response = await fetch(`${API_URL}/thing?id=${chunk}`);
                   const data = await response.text();
                   const clearJson = convert.xml2js(data, {
                     compact: true,
@@ -244,7 +242,7 @@ function Session({ user, setUser }) {
           }
         });
         const filtered = completeListOfGames.filter(
-          game => game._attributes.type !== "boardgameexpansion"
+          (game) => game._attributes.type !== "boardgameexpansion"
         );
         sortByTitles(filtered);
         setDisplayedListOfGames(filtered);
@@ -337,7 +335,7 @@ function Session({ user, setUser }) {
   };
 
   const closePane = () => {
-    infoPane.current.style.transition = 'transform 200ms ease-out';
+    infoPane.current.style.transition = "transform 200ms ease-out";
     infoPane.current.style.transform = `translateX(100%)`;
     setTimeout(() => setPaneState(false), 400);
   };
@@ -391,40 +389,54 @@ function Session({ user, setUser }) {
         <p className="bonz">
           {displayedListOfGames.length > 0
             ? `Displaying ${displayedListOfGames.length} of ${completeListOfGames.length} total fetched games and expansions.`
-            : "Loading..."
-          }
+            : "Loading..."}
         </p>
       </div>
 
-      {paneState &&
+      {paneState && (
         <div
           ref={infoPane}
           className="slide-pane__overlay"
           onClick={closePane}
           {...swipeHandlers}
         >
-          <div className="slide-pane" onClick={e => e.stopPropagation()}>
+          <div className="slide-pane" onClick={(e) => e.stopPropagation()}>
             <div
               className="slide-pane__close"
               role="button"
               tabIndex="0"
               onClick={closePane}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 13 22"><path fill="currentColor" fillRule="evenodd" d="M4 11l8 8c.6.5.6 1.5 0 2-.5.6-1.5.6-2 0l-9-9c-.6-.5-.6-1.5 0-2l9-9c.5-.6 1.5-.6 2 0 .6.5.6 1.5 0 2l-8 8z"></path></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 13 22">
+                <path
+                  fill="currentColor"
+                  fillRule="evenodd"
+                  d="M4 11l8 8c.6.5.6 1.5 0 2-.5.6-1.5.6-2 0l-9-9c-.6-.5-.6-1.5 0-2l9-9c.5-.6 1.5-.6 2 0 .6.5.6 1.5 0 2l-8 8z"
+                ></path>
+              </svg>
             </div>
             <h2 className="slide-pane__title">
-              {htmlDecode(gameWithInfo.name && firstInList(gameWithInfo.name, "_attributes.value"))}
+              {htmlDecode(
+                gameWithInfo.name &&
+                  firstInList(gameWithInfo.name, "_attributes.value")
+              )}
             </h2>
             {/* gameWithInfo._attributes.id */}
-            <img src={gameWithInfo?.image?._text} alt="" style={{maxWidth: "100%"}} />
-            <em><NiceList list={gameWithInfo.link} type="boardgamecategory" /></em>
+            <img
+              src={gameWithInfo?.image?._text}
+              alt=""
+              style={{ maxWidth: "100%" }}
+            />
+            <em>
+              <NiceList list={gameWithInfo.link} type="boardgamecategory" />
+            </em>
             <div className="slide-pane__description">
-              { htmlDecode(gameWithInfo?.description?._text) }
+              {htmlDecode(gameWithInfo?.description?._text)}
             </div>
             <NiceList list={gameWithInfo.link} type="boardgamemechanic" />
           </div>
         </div>
-      }
+      )}
     </>
   );
 }
