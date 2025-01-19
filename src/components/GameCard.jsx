@@ -17,7 +17,7 @@ const GameCard = ({
   const addToSelection = () => {
     // console.log(`${userName}, ${gameId}, ${gameImage}`);
     !visit &&
-      fetch("https://makak.space/gamenightbackend?action=selection", {
+      fetch("https://makak.space/gamenightbackend/?action=selection", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -45,7 +45,7 @@ function Selection({ selection, updateSelection, userName }) {
 
   function addToSelection(gameId, gameImage) {
     !visit &&
-      fetch("https://makak.space/gamenightbackend?action=selection", {
+      fetch("https://makak.space/gamenightbackend/?action=selection", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
