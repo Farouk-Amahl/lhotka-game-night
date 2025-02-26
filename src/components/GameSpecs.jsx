@@ -1,4 +1,3 @@
-import React from "react";
 import Meeple from "./meeple";
 
 const GameSpecs = ({ game }) => {

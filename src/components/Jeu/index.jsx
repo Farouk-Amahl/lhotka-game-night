@@ -1,4 +1,3 @@
-import React from "react";
 import PropTypes from "prop-types";
 import "../../styles/jeux.css";
 import States from "../States";
@@ -55,7 +54,7 @@ function Jeu({
       <div className="blocJeuInfo" onClick={() => showPane(index)}>
         <span>{htmlDecode(titre)}</span>
         <br />
-        <span className="viewMore to be styled">View more...</span>
+        <span className="viewMore">View more...</span>
         <States jeu={jeu} />
       </div>
     </div>
