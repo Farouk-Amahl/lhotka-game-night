@@ -32,7 +32,7 @@ function Selection({ selection, updateSelection, userName }) {
       return 0;
     });
     setGameSelected(tempArray);
-    console.log("selection: ", tempArray);
+    console.log("Selection", tempArray);
     if (tempArray.length === 0) {
       tempArray[0] = {
         id: 0,
@@ -63,10 +63,10 @@ function Selection({ selection, updateSelection, userName }) {
   return (
     <div className="selection">
       {selection &&
-        gamesSelected.map((game) => (
+        gamesSelected.map((game, index) => (
           <div
             className="blocSelection"
-            key={game.gameId}
+            key={index}
             onClick={() => addToSelection(game.gameId, game.gameImage)}
           >
             <div

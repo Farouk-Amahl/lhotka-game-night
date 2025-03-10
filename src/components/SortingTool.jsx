@@ -45,10 +45,10 @@ function SortingTool({
         <input
           type="range"
           id="nbrPlayersMax"
-          min="3"
+          min="1"
           max="10"
           step="1"
-          defaultValue="5"
+          defaultValue="1"
           onChange={(e) => {
             sortByNbrPlayers(e.target.value);
             autoClose();

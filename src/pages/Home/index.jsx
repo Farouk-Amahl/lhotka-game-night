@@ -6,7 +6,7 @@ import Countdown from "../../components/Countdown";
 function Home() {
   return (
     <div className="divHome">
-      <Link to="/pres">
+      <Link to="/visit">
         <div className="divTextHome">
           <Countdown textToDisplay="Next Games in..." />
         </div>

@@ -7,7 +7,7 @@ const Countdown = ({ textToDisplay }) => {
   const addAZero = (num) => {
     return num < 10 ? "0" + num : num;
   };
-  const getNextThursdayAtNineteen = useCallback((altText) => {
+  const getNextThursdayAtNineteen = useCallback(() => {
     const now = new Date();
     const today = now.getDay();
     const dayNextGame = 4;

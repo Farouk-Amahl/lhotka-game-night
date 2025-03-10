@@ -36,6 +36,8 @@ function Session({ user, setUser }) {
     });
   }, []);
 
+  console.log("session: ", currentUser);
+
   useEffect(() => {
     (async () => {
       const rawResponse = await fetch(
@@ -227,9 +229,8 @@ function Session({ user, setUser }) {
           }
         });
         const filtered = completeListOfGames.filter(
-          (game) =>
-            game._attributes.type !== "boardgameexpansion" &&
-            game.maxplayers._attributes.value > 3
+          (game) => game._attributes.type !== "boardgameexpansion" /*&&
+            game.maxplayers._attributes.value > 3*/
         );
         sortByTitles(filtered);
         setDisplayedListOfGames(filtered);
@@ -291,8 +292,8 @@ function Session({ user, setUser }) {
       default:
         sorted = completeListOfGames.filter(
           (game) =>
-            game.minplayers._attributes.value * 1 <= sort &&
-            game.maxplayers._attributes.value * 1 >= sort &&
+            /*game.minplayers._attributes.value * 1 <= sort &&
+            game.maxplayers._attributes.value * 1 >= sort &&*/
             game._attributes.type !== "boardgameexpansion"
         );
     }
