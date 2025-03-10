@@ -10,7 +10,7 @@ import NiceList from "../../components/NiceList";
 
 const BACKEND_URL = "https://makak.space/gamenightbackend/";
 const API_URL = "https://api.geekdo.com/xmlapi2";
-const PREFIXES = ['The ', 'A '];
+const PREFIXES = ["The ", "A "];
 
 function Session({ user, setUser }) {
   const [gameOwnersList, setGameOwnersList] = useState([]);
@@ -18,7 +18,7 @@ function Session({ user, setUser }) {
   const [completeListOfGames, setCompleteListOfGames] = useState([]);
   const [displayedListOfGames, setDisplayedListOfGames] = useState([]);
   const [selection, updateSelection] = useState([]);
-  const [gameWithInfo, setGameWithInfo] = useState({}); 
+  const [gameWithInfo, setGameWithInfo] = useState({});
   const [twoPlayersClicked, setTwoPlayersClicked] = useState(false);
   const [soloGameClicked, setSoloGameClicked] = useState(false);
 
@@ -44,8 +44,8 @@ function Session({ user, setUser }) {
     },
   });
 
-  const sortByTitles = useCallback(list =>
-    list.sort((a, b) => cleanTitle(a).localeCompare(cleanTitle(b))),
+  const sortByTitles = useCallback(
+    (list) => list.sort((a, b) => cleanTitle(a).localeCompare(cleanTitle(b))),
     []
   );
 
@@ -54,7 +54,7 @@ function Session({ user, setUser }) {
   useEffect(() => {
     (async () => {
       const label = "Light speed !!!!";
-      console.time(label)
+      console.time(label);
       const rawResponse = await fetch(BACKEND_URL + "?action=cached");
       let content = await rawResponse.json();
       content = JSON.parse(content);
@@ -238,12 +238,7 @@ function Session({ user, setUser }) {
           }
         });
         const filtered = completeListOfGames.filter(
-<<<<<<< HEAD
-          (game) => game._attributes.type !== "boardgameexpansion" /*&&
-            game.maxplayers._attributes.value > 3*/
-=======
           (game) => game._attributes.type !== "boardgameexpansion"
->>>>>>> 71b8de911f1d2443538f8046ef2f60be057c4993
         );
         sortByTitles(filtered);
         setDisplayedListOfGames(filtered);
@@ -268,54 +263,50 @@ function Session({ user, setUser }) {
       });
   }, []);
 
-  const sortingGames = useCallback((sort) => {
-    let sorted = [];
-    const list = [...completeListOfGames]
-      .filter(game => game._attributes.type !== "boardgameexpansion");
+  const sortingGames = useCallback(
+    (sort) => {
+      let sorted = [];
+      const list = [...completeListOfGames].filter(
+        (game) => game._attributes.type !== "boardgameexpansion"
+      );
 
-    switch (sort) {
-      case "solo":
-        soloGameClicked
-          ? (sorted = list)
-          : (sorted = list.filter(
-              (game) =>
-                game.minplayers._attributes.value * 1 === 1
-            ));
-        break;
-      case "two players":
-        twoPlayersClicked
-          ? (sorted = list)
-          : (sorted = list.filter(
-              (game) =>
-                game.minplayers._attributes.value * 1 <= 2 &&
-                game.maxplayers._attributes.value * 1 >= 2
-            ));
-        break;
-      case "number":
-        break;
-      case "":
-      default:
-<<<<<<< HEAD
-        sorted = completeListOfGames.filter(
-          (game) =>
-            /*game.minplayers._attributes.value * 1 <= sort &&
-            game.maxplayers._attributes.value * 1 >= sort &&*/
-            game._attributes.type !== "boardgameexpansion"
-        );
-=======
-        sorted = list.filter(game => game.maxplayers._attributes.value * 1 >= sort);
->>>>>>> 71b8de911f1d2443538f8046ef2f60be057c4993
-    }
-    sortByTitles(sorted);
-    console.log("4.list to display");
-    setDisplayedListOfGames(sorted);
-    twoPlayersClicked && setTwoPlayersClicked(false);
-    soloGameClicked && setSoloGameClicked(false);
-  }, [completeListOfGames, soloGameClicked, sortByTitles, twoPlayersClicked]);
+      switch (sort) {
+        case "solo":
+          soloGameClicked
+            ? (sorted = list)
+            : (sorted = list.filter(
+                (game) => game.minplayers._attributes.value * 1 === 1
+              ));
+          break;
+        case "two players":
+          twoPlayersClicked
+            ? (sorted = list)
+            : (sorted = list.filter(
+                (game) =>
+                  game.minplayers._attributes.value * 1 <= 2 &&
+                  game.maxplayers._attributes.value * 1 >= 2
+              ));
+          break;
+        case "number":
+          break;
+        case "":
+        default:
+          sorted = list.filter(
+            (game) => game.maxplayers._attributes.value * 1 >= sort
+          );
+      }
+      sortByTitles(sorted);
+      console.log("4.list to display");
+      setDisplayedListOfGames(sorted);
+      twoPlayersClicked && setTwoPlayersClicked(false);
+      soloGameClicked && setSoloGameClicked(false);
+    },
+    [completeListOfGames, soloGameClicked, sortByTitles, twoPlayersClicked]
+  );
 
   const cleanTitle = (x) => {
     const title = x.name[0]?._attributes.value || x.name._attributes.value;
-    const matchingPrefix = PREFIXES.find(prefix => title.startsWith(prefix));
+    const matchingPrefix = PREFIXES.find((prefix) => title.startsWith(prefix));
     return matchingPrefix ? title.slice(matchingPrefix.length) : title;
   };
 

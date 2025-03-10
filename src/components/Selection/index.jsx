@@ -66,11 +66,7 @@ function Selection({ selection, updateSelection, userName }) {
         gamesSelected.map((game, index) => (
           <div
             className="blocSelection"
-<<<<<<< HEAD
-            key={index}
-=======
             key={game.gameId + index}
->>>>>>> 71b8de911f1d2443538f8046ef2f60be057c4993
             onClick={() => addToSelection(game.gameId, game.gameImage)}
           >
             <div

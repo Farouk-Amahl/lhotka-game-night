@@ -18,7 +18,7 @@ function SortingTool({
     choise === "solo" && setSoloGames(true);
     sortByNbrPlayers(choise);
     if (clicked === choise) {
-      setClicked("")
+      setClicked("");
       setMinPlayers(1);
     } else {
       setClicked(choise);
@@ -49,20 +49,6 @@ function SortingTool({
             {clicked === "two players" && `}`}
           </button>
         </div>
-<<<<<<< HEAD
-        <input
-          type="range"
-          id="nbrPlayersMax"
-          min="1"
-          max="10"
-          step="1"
-          defaultValue="1"
-          onChange={(e) => {
-            sortByNbrPlayers(e.target.value);
-            autoClose();
-          }}
-        />
-=======
         <div className="inputGroup">
           <input
             title="Minimum players"
@@ -81,7 +67,6 @@ function SortingTool({
           />
           <span>{minPlayers > 0 ? minPlayers : "Ø"}</span>
         </div>
->>>>>>> 71b8de911f1d2443538f8046ef2f60be057c4993
       </div>
     </>
   );
