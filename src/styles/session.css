@@ -1,5 +1,6 @@
 .sessionContainer {
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   position: relative;
 }
 
@@ -18,8 +19,29 @@
 }
 
 .sessionInner {
-  display: flex;
-  gap: 1em;
-  flex-wrap: wrap;
-  padding: 1em;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  padding: 3em;
+}
+
+@media screen and (max-width: 1200px) {
+ .sessionInner {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    padding: 2em;
+  } 
+}
+
+@media screen and (max-width: 900px) {
+ .sessionInner {
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    padding: 1em;
+  } 
+}
+
+@media only screen and (max-height: 600px) and (orientation: landscape) {
+  .sessionInner {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    padding: 1em;
+  }
 }

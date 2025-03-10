@@ -1,52 +1,65 @@
-// @ts-nocheck
-import React from "react";
+import useSwipe from "../../utils/useSwipe";
 import GameCard from "../../components/GameCard";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import Selection from "../../components/Selection";
 import Options from "../../components/Options";
 import SortingTool from "../../components/SortingTool";
 import "../../styles/session.css";
 import convert from "xml-js";
-import SlidingPane from "react-sliding-pane";
 import NiceList from "../../components/NiceList";
-/* import ExpandableText from "../../components/ExpandableText";*/
-// import "react-sliding-pane/dist/react-sliding-pane.css";
-// import "../../styles/customSlidingPane.css";
+
+const BACKEND_URL = "https://makak.space/gamenightbackend/";
+const API_URL = "https://api.geekdo.com/xmlapi2";
+const PREFIXES = ['The ', 'A '];
 
 function Session({ user, setUser }) {
   const [gameOwnersList, setGameOwnersList] = useState([]);
   const [gamesOwned, setGamesOwned] = useState([]);
-  const ownedGames = useRef([]);
   const [completeListOfGames, setCompleteListOfGames] = useState([]);
   const [displayedListOfGames, setDisplayedListOfGames] = useState([]);
-
-  const currentUser = sessionStorage.getItem("userName");
   const [selection, updateSelection] = useState([]);
-  const [paneState, setPaneState] = useState(false);
-  const [gameWithInfo, setGameWithInfo] = useState({});
-
+  const [gameWithInfo, setGameWithInfo] = useState({}); 
   const [twoPlayersClicked, setTwoPlayersClicked] = useState(false);
   const [soloGameClicked, setSoloGameClicked] = useState(false);
 
-  const sortByTitles = useCallback((list) => {
-    list.sort(function compare(a, b) {
-      if (cleanTitle(a) < cleanTitle(b)) return -1;
-      if (cleanTitle(a) > cleanTitle(b)) return 1;
-      return 0;
-    });
-  }, []);
+  const ownedGames = useRef([]);
+  const infoPane = useRef(HTMLDivElement);
+  const currentUser = useMemo(() => sessionStorage.getItem("userName"), []);
+
+  const swipeHandlers = useSwipe({
+    onSwipedLeft: () => {},
+    onSwipedRight: () => closePane(),
+    onSwiping: (e) => {
+      if (infoPane.current && e.dir === "Right") {
+        const translateX = Math.min(e.absX, window.innerWidth);
+        infoPane.current.style.transform = `translateX(${translateX}px)`;
+        infoPane.current.style.transition = "none";
+      }
+    },
+    onSwipeEnd: () => {
+      if (infoPane.current) {
+        infoPane.current.style.transform = "";
+        infoPane.current.style.transition = "";
+      }
+    },
+  });
+
+  const sortByTitles = useCallback(list =>
+    list.sort((a, b) => cleanTitle(a).localeCompare(cleanTitle(b))),
+    []
+  );
 
   console.log("session: ", currentUser);
 
   useEffect(() => {
     (async () => {
-      const rawResponse = await fetch(
-        "https://gamenightbackend.makak.space?action=cached"
-      );
+      const label = "Light speed !!!!";
+      console.time(label)
+      const rawResponse = await fetch(BACKEND_URL + "?action=cached");
       let content = await rawResponse.json();
       content = JSON.parse(content);
       setCompleteListOfGames(content);
-      console.log("Light speed !!!!");
+      console.timeEnd(label);
     })();
   }, []);
 
@@ -62,7 +75,7 @@ function Session({ user, setUser }) {
       const fetchAllPlayersLists = async () => {
         const requests = gameOwnersList.map(async (player) => {
           const response = await fetch(
-            `https://api.geekdo.com/xmlapi2/collection?username=${player}`
+            `${API_URL}/collection?username=${player}`
           );
           const data = await response.text();
           const clearJson = convert.xml2js(data, { compact: true, spaces: 4 });
@@ -116,9 +129,7 @@ function Session({ user, setUser }) {
               "2,1.checking if the data is already loaded the response is yes"
             );
             (async () => {
-              const rawResponse = await fetch(
-                "https://gamenightbackend.makak.space?action=cached"
-              );
+              const rawResponse = await fetch(BACKEND_URL + "?action=cached");
               let content = await rawResponse.json();
               content = JSON.parse(content);
               setCompleteListOfGames(content);
@@ -139,9 +150,7 @@ function Session({ user, setUser }) {
                 for (let i = 0; i < stringOfGamesIds.length; i++) {
                   const chunk = stringOfGamesIds[i];
                   chunk.join(",");
-                  const response = await fetch(
-                    `https://api.geekdo.com/xmlapi2/thing?id=` + chunk
-                  );
+                  const response = await fetch(`${API_URL}/thing?id=${chunk}`);
                   const data = await response.text();
                   const clearJson = convert.xml2js(data, {
                     compact: true,
@@ -152,7 +161,7 @@ function Session({ user, setUser }) {
 
                 (async () => {
                   const rawResponse = await fetch(
-                    "https://gamenightbackend.makak.space/?action=cache",
+                    BACKEND_URL + "?action=cache",
                     {
                       method: "POST",
                       headers: {
@@ -229,8 +238,12 @@ function Session({ user, setUser }) {
           }
         });
         const filtered = completeListOfGames.filter(
+<<<<<<< HEAD
           (game) => game._attributes.type !== "boardgameexpansion" /*&&
             game.maxplayers._attributes.value > 3*/
+=======
+          (game) => game._attributes.type !== "boardgameexpansion"
+>>>>>>> 71b8de911f1d2443538f8046ef2f60be057c4993
         );
         sortByTitles(filtered);
         setDisplayedListOfGames(filtered);
@@ -243,7 +256,7 @@ function Session({ user, setUser }) {
   // ongoing selection of games
   useEffect(() => {
     console.log("selected games");
-    fetch(`https://gamenightbackend.makak.space?action=select`)
+    fetch(`${BACKEND_URL}?action=select`)
       .then((res) => {
         return res.json();
       })
@@ -255,80 +268,75 @@ function Session({ user, setUser }) {
       });
   }, []);
 
-  const sortingGames = (sort) => {
+  const sortingGames = useCallback((sort) => {
     let sorted = [];
+    const list = [...completeListOfGames]
+      .filter(game => game._attributes.type !== "boardgameexpansion");
+
     switch (sort) {
       case "solo":
         soloGameClicked
-          ? (sorted = completeListOfGames.filter(
+          ? (sorted = list)
+          : (sorted = list.filter(
               (game) =>
-                game.minplayers._attributes.value * 1 === 1 &&
-                game.maxplayers._attributes.value * 1 === 1 &&
-                game._attributes.type !== "boardgameexpansion"
-            ))
-          : (sorted = completeListOfGames.filter(
-              (game) =>
-                game.minplayers._attributes.value * 1 === 1 &&
-                game._attributes.type !== "boardgameexpansion"
+                game.minplayers._attributes.value * 1 === 1
             ));
         break;
       case "two players":
         twoPlayersClicked
-          ? (sorted = completeListOfGames.filter(
+          ? (sorted = list)
+          : (sorted = list.filter(
               (game) =>
-                game.minplayers._attributes.value * 1 === 2 &&
-                game.maxplayers._attributes.value * 1 === 2 &&
-                game._attributes.type !== "boardgameexpansion"
-            ))
-          : (sorted = completeListOfGames.filter(
-              (game) =>
-                game.minplayers._attributes.value * 1 < 3 &&
-                game.maxplayers._attributes.value * 1 > 1 &&
-                game._attributes.type !== "boardgameexpansion"
+                game.minplayers._attributes.value * 1 <= 2 &&
+                game.maxplayers._attributes.value * 1 >= 2
             ));
         break;
       case "number":
         break;
+      case "":
       default:
+<<<<<<< HEAD
         sorted = completeListOfGames.filter(
           (game) =>
             /*game.minplayers._attributes.value * 1 <= sort &&
             game.maxplayers._attributes.value * 1 >= sort &&*/
             game._attributes.type !== "boardgameexpansion"
         );
+=======
+        sorted = list.filter(game => game.maxplayers._attributes.value * 1 >= sort);
+>>>>>>> 71b8de911f1d2443538f8046ef2f60be057c4993
     }
     sortByTitles(sorted);
     console.log("4.list to display");
     setDisplayedListOfGames(sorted);
     twoPlayersClicked && setTwoPlayersClicked(false);
     soloGameClicked && setSoloGameClicked(false);
-  };
+  }, [completeListOfGames, soloGameClicked, sortByTitles, twoPlayersClicked]);
 
   const cleanTitle = (x) => {
-    const titre = x.name[0]
-      ? x.name[0]._attributes.value
-      : x.name._attributes.value;
-    let newTitle = "";
-    titre.indexOf("The ") === 0
-      ? (newTitle = titre.slice(4))
-      : titre.indexOf("A ") === 0
-      ? (newTitle = titre.slice(2))
-      : (newTitle = titre);
-    return newTitle;
+    const title = x.name[0]?._attributes.value || x.name._attributes.value;
+    const matchingPrefix = PREFIXES.find(prefix => title.startsWith(prefix));
+    return matchingPrefix ? title.slice(matchingPrefix.length) : title;
   };
 
   const setThePane = (gameIndex) => {
-    setGameWithInfo(displayedListOfGames.at(gameIndex));
-    setPaneState(true);
-    console.log(gameWithInfo);
+    const gameInfo = displayedListOfGames.at(gameIndex);
+    setGameWithInfo(gameInfo);
+    console.log(gameInfo);
   };
 
   const htmlDecode = (input) => {
-    var doc = new DOMParser().parseFromString(input, "text/html");
+    const doc = new DOMParser().parseFromString(input, "text/html");
     return doc.documentElement.textContent;
   };
 
-  const firtInList = (elem, pathToValue) => {
+  const closePane = () => {
+    infoPane.current.style.transition = "transform 200ms ease-out";
+    infoPane.current.style.transform = `translateX(100%)`;
+    setTimeout(() => setGameWithInfo({}), 400);
+  };
+
+  const firstInList = (elem, pathToValue) => {
     const pathArray = pathToValue.split(".");
     return pathArray.reduce(
       (acc, curr) => acc && acc[curr],
@@ -374,27 +382,57 @@ function Session({ user, setUser }) {
               />
             ))}
         </div>
+        <p className="bonz">
+          {displayedListOfGames.length > 0
+            ? `Displaying ${displayedListOfGames.length} of ${completeListOfGames.length} total fetched games and expansions.`
+            : "Loading..."}
+        </p>
       </div>
-      <SlidingPane
-        className="theSlidingPane"
-        overlayClassName="some-custom-overlay-class"
-        width="100%"
-        isOpen={paneState}
-        title={htmlDecode(
-          gameWithInfo.name &&
-            firtInList(gameWithInfo.name, "_attributes.value")
-        )}
-        subtitle="Optional subtitle."
-        onRequestClose={() => {
-          // triggered on "<" on left top click or on outside click
-          setPaneState(false);
-        }}
-      >
-        <NiceList list={gameWithInfo.link} />
-        {/*<ExpandableText
-          textToDisplay={htmlDecode(gameWithInfo.description._text)}
-        />*/}
-      </SlidingPane>
+
+      {gameWithInfo?.name && (
+        <div
+          ref={infoPane}
+          className="slide-pane__overlay"
+          onClick={closePane}
+          {...swipeHandlers}
+        >
+          <div className="slide-pane" onClick={(e) => e.stopPropagation()}>
+            <div
+              className="slide-pane__close"
+              role="button"
+              tabIndex="0"
+              onClick={closePane}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 13 22">
+                <path
+                  fill="currentColor"
+                  fillRule="evenodd"
+                  d="M4 11l8 8c.6.5.6 1.5 0 2-.5.6-1.5.6-2 0l-9-9c-.6-.5-.6-1.5 0-2l9-9c.5-.6 1.5-.6 2 0 .6.5.6 1.5 0 2l-8 8z"
+                ></path>
+              </svg>
+            </div>
+            <h2 className="slide-pane__title">
+              {htmlDecode(
+                gameWithInfo.name &&
+                  firstInList(gameWithInfo.name, "_attributes.value")
+              )}
+            </h2>
+            {/* gameWithInfo._attributes.id */}
+            <img
+              src={gameWithInfo?.image?._text}
+              alt=""
+              style={{ maxWidth: "100%" }}
+            />
+            <em>
+              <NiceList list={gameWithInfo.link} type="boardgamecategory" />
+            </em>
+            <div className="slide-pane__description">
+              {htmlDecode(gameWithInfo?.description?._text)}
+            </div>
+            <NiceList list={gameWithInfo.link} type="boardgamemechanic" />
+          </div>
+        </div>
+      )}
     </>
   );
 }

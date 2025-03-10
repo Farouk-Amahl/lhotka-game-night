@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "../../styles/selection.css";
 import { useLocation } from "react-router-dom";
 
@@ -36,7 +36,7 @@ function Selection({ selection, updateSelection, userName }) {
     if (tempArray.length === 0) {
       tempArray[0] = {
         id: 0,
-        gameImage: "https://gamenightbackend.makak.space/img/default.jpg",
+        gameImage: "https://makak.space/gamenightbackend/img/default.jpg",
         userName: "",
         nbrChoise: 0,
       };
@@ -45,7 +45,7 @@ function Selection({ selection, updateSelection, userName }) {
 
   function addToSelection(gameId, gameImage) {
     !visit &&
-      fetch("https://gamenightbackend.makak.space?action=selection", {
+      fetch("https://makak.space/gamenightbackend/?action=selection", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -66,7 +66,11 @@ function Selection({ selection, updateSelection, userName }) {
         gamesSelected.map((game, index) => (
           <div
             className="blocSelection"
+<<<<<<< HEAD
             key={index}
+=======
+            key={game.gameId + index}
+>>>>>>> 71b8de911f1d2443538f8046ef2f60be057c4993
             onClick={() => addToSelection(game.gameId, game.gameImage)}
           >
             <div

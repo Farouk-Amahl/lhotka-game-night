@@ -1,20 +1,22 @@
 .divTextHome {
   position: absolute;
   color: #a7e3a7;
-  top: 75vh;
+  bottom: 0;
   left: calc(50vw - 125px);
   width: 250px;
   height: 155px;
   text-align: center;
   text-shadow: 0 0 10px #b0eb6d;
-
+  user-select: none;
   font-family: "Kumar One", serif;
   font-weight: 400;
   font-style: normal;
 }
 
-.textHomeText {
-  /*padding: 0.5em;*/
+@media screen and (max-width: 900px) {
+  .divTextHome {
+    text-shadow: 0 0 10px #b0eb6d99;
+  }
 }
 
 .textHomeCountdown .designation {
