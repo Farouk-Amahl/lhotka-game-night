@@ -1,6 +1,7 @@
 import useSwipe from "../../utils/useSwipe";
 import GameCard from "../../components/GameCard";
-import { useState, useEffect, useMemo, useRef, useCallback } from "react";
+/*import { useState, useEffect, useMemo, useRef, useCallback } from "react";*/
+import { useState, useEffect, useRef, useCallback } from "react";
 import Selection from "../../components/Selection";
 import Options from "../../components/Options";
 import SortingTool from "../../components/SortingTool";
@@ -24,7 +25,8 @@ function Session({ user, setUser }) {
 
   const ownedGames = useRef([]);
   const infoPane = useRef(HTMLDivElement);
-  const currentUser = useMemo(() => sessionStorage.getItem("userName"), []);
+  /*const currentUser = useMemo(() => sessionStorage.getItem("userName"), []);*/
+  const currentUser = sessionStorage.getItem("userName");
 
   const swipeHandlers = useSwipe({
     onSwipedLeft: () => {},
