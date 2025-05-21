@@ -210,11 +210,8 @@ function Session({ user, setUser }) {
             if (targetedGame !== undefined) {
               if (targetedGame._attributes.owners === undefined) {
                 targetedGame._attributes.owners = [];
-              } else {
-                targetedGame._attributes.owners.push(
-                  gameOwned._attributes.owner
-                );
               }
+              targetedGame._attributes.owners.push(gameOwned._attributes.owner);
             }
           });
         });
@@ -298,7 +295,6 @@ function Session({ user, setUser }) {
           );
       }
       sortByTitles(sorted);
-      console.log("4.list to display");
       setDisplayedListOfGames(sorted);
       twoPlayersClicked && setTwoPlayersClicked(false);
       soloGameClicked && setSoloGameClicked(false);
@@ -410,7 +406,9 @@ function Session({ user, setUser }) {
                   firstInList(gameWithInfo.name, "_attributes.value")
               )}
             </h2>
-            {/* gameWithInfo._attributes.id */}
+            <h3 className="slide-pane__title">
+              by {gameWithInfo._attributes.owners.join(", ")}
+            </h3>
             <img
               src={gameWithInfo?.image?._text}
               alt=""
