@@ -5,7 +5,7 @@ import { useLocation } from "react-router-dom";
 function Selection({ selection, updateSelection, userName }) {
   const visit = useLocation().pathname === "/visit" ? true : false;
   const [gamesSelected, setGameSelected] = useState([]);
-  const [visibleSelection, setVisibleSelection] = useState(false);
+  const [visibleSelection, setVisibleSelection] = useState(true);
 
   useEffect(() => {
     const tempArray = [];
