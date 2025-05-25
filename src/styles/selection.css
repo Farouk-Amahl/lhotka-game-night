@@ -1,16 +1,24 @@
 .selectionContainer {
-  padding: 1em;
+  padding: 0;
   background-color: #eef7eb;
   border-bottom: 6px solid #d5dbdb;
   position: sticky;
   top: 0;
   z-index: 9;
+  max-height: 0;
+  transition: all 0.5s ease 0.5s;
+}
+
+.selectionContainer.visibleSelection {
+  padding: 1em;
+  max-height: 500px;
 }
 
 .selection {
   display: grid;
   grid-template-columns: repeat(auto-fit, 120px);
   gap: 0.8em;
+  height: 100%;
 }
 
 @media screen and (max-width: 900px) {
@@ -87,4 +95,14 @@
 
 .blocSelection:hover .blocSelectionVoters {
   display: flex;
+}
+
+.blocSelectionButton {
+  position: absolute;
+  top: 100%;
+  padding: 0.5em;
+  background-color: #d5dbdb;
+  left: 0;
+  border-bottom-right-radius: 0.5em;
+  cursor: pointer;
 }

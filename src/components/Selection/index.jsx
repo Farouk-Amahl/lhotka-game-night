@@ -5,6 +5,7 @@ import { useLocation } from "react-router-dom";
 function Selection({ selection, updateSelection, userName }) {
   const visit = useLocation().pathname === "/visit" ? true : false;
   const [gamesSelected, setGameSelected] = useState([]);
+  const [visibleSelection, setVisibleSelection] = useState(false);
 
   useEffect(() => {
     const tempArray = [];
@@ -60,29 +61,46 @@ function Selection({ selection, updateSelection, userName }) {
         });
   }
 
-  return (
-    <div className="selection">
-      {selection &&
-        gamesSelected.map((game, index) => (
-          <div
-            className="blocSelection"
-            key={game.gameId + index}
-            onClick={() => addToSelection(game.gameId, game.gameImage)}
-          >
-            <div
-              className={`blocSelectionImage ${
-                game.userName.indexOf(userName) !== -1 && "select"
-              }`}
-            >
-              <img src={game.gameImage} alt={game.id} />
-            </div>
+  function toggleVisibiltySelection() {
+    console.log("Dookie!");
+    setVisibleSelection(!visibleSelection);
+  }
 
-            {game.nbrChoise > 1 && (
-              <span className="blocSelectionCompte">{game.nbrChoise}</span>
-            )}
-            <span className="blocSelectionVoters">{game.userName}</span>
-          </div>
-        ))}
+  return (
+    <div
+      className={`selectionContainer ${
+        visibleSelection ? "visibleSelection" : ""
+      }`}
+    >
+      <div className="selection">
+        {selection &&
+          gamesSelected.map((game, index) => (
+            <div
+              className="blocSelection"
+              key={game.gameId + index}
+              onClick={() => addToSelection(game.gameId, game.gameImage)}
+            >
+              <div
+                className={`blocSelectionImage ${
+                  game.userName.indexOf(userName) !== -1 && "select"
+                }`}
+              >
+                <img src={game.gameImage} alt={game.id} />
+              </div>
+
+              {game.nbrChoise > 1 && (
+                <span className="blocSelectionCompte">{game.nbrChoise}</span>
+              )}
+              <span className="blocSelectionVoters">{game.userName}</span>
+            </div>
+          ))}
+        <div
+          onClick={() => toggleVisibiltySelection()}
+          className="blocSelectionButton"
+        >
+          Selection
+        </div>
+      </div>
     </div>
   );
 }

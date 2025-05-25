@@ -51,8 +51,6 @@ function Session({ user, setUser }) {
     []
   );
 
-  console.log("session: ", currentUser);
-
   useEffect(() => {
     (async () => {
       const label = "Light speed !!!!";
@@ -68,7 +66,6 @@ function Session({ user, setUser }) {
   // setting the list of game owners
   useEffect(() => {
     setGameOwnersList(["mcxii", "Scrobs", "Ruhtro", "MarkoHighlander"]);
-    console.log("1.setting the list of game owners, going to next step");
   }, []);
 
   // getting exaustive list of games but missing information, more complete list on the next useEffect
@@ -99,9 +96,6 @@ function Session({ user, setUser }) {
             }
           });
           setGamesOwned(namesAndGames);
-          console.log(
-            "2.Loop on games owners putting in place the list of games owned"
-          );
         } catch (error) {
           console.error("Trying to fetch every players's lists :", error);
         }
@@ -127,9 +121,6 @@ function Session({ user, setUser }) {
           const storedGamesOwned = localStorage.getItem("gamesOwned");
           const currentGamesOwned = stringOfGamesIds.join(",");
           if (storedGamesOwned === currentGamesOwned) {
-            console.log(
-              "2,1.checking if the data is already loaded the response is yes"
-            );
             (async () => {
               const rawResponse = await fetch(BACKEND_URL + "?action=cached");
               let content = await rawResponse.json();
@@ -138,9 +129,6 @@ function Session({ user, setUser }) {
             })();
           } else {
             if (currentGamesOwned) {
-              console.log(
-                "There's some changes so let's reload things from bgg"
-              );
               stringOfGamesIds = [...new Set(stringOfGamesIds)];
               let chunks = [];
               for (let i = 0; i < stringOfGamesIds.length / 20; i++) {
@@ -191,7 +179,6 @@ function Session({ user, setUser }) {
             localStorage.setItem("gamesOwned", stringOfGamesIds.join(","));
           }
         }
-        console.log("3.complete list of games");
       };
       fetchMoreCompleteListOfGames();
     }
@@ -249,7 +236,6 @@ function Session({ user, setUser }) {
 
   // ongoing selection of games
   useEffect(() => {
-    console.log("selected games");
     fetch(`${BACKEND_URL}?action=select`)
       .then((res) => {
         return res.json();
@@ -311,7 +297,6 @@ function Session({ user, setUser }) {
   const setThePane = (gameIndex) => {
     const gameInfo = displayedListOfGames.at(gameIndex);
     setGameWithInfo(gameInfo);
-    console.log(gameInfo);
   };
 
   const htmlDecode = (input) => {
@@ -335,13 +320,11 @@ function Session({ user, setUser }) {
 
   return (
     <>
-      <div className="selectionContainer">
-        <Selection
-          selection={selection}
-          updateSelection={updateSelection}
-          userName={currentUser}
-        />
-      </div>
+      <Selection
+        selection={selection}
+        updateSelection={updateSelection}
+        userName={currentUser}
+      />
       <div className="sessionContainer">
         <Options
           label="Sorting"
