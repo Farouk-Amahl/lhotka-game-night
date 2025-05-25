@@ -1,19 +1,19 @@
 .loginBtn {
-    position: fixed;
-    z-index: 10;
-    border: 1px solid #d5dbdb;
-    padding: 0.5em;
-    width: 100px;
-    text-align: center;
-    background-color: blueviolet;
-    right: 0;
-    margin: .5em;
-    border-radius: 5px;
-    color: #eef7eb;
-    top: 0;
+  position: fixed;
+  z-index: 10;
+  border: 1px solid #d5dbdb;
+  padding: 0.5em;
+  width: 100px;
+  text-align: center;
+  background-color: blueviolet;
+  right: 0;
+  margin: 0.5em;
+  border-radius: 5px;
+  color: #eef7eb;
+  bottom: 0;
 }
 
 .loginBtn a {
-    text-decoration: none;
-    color: inherit;
+  text-decoration: none;
+  color: inherit;
 }
