@@ -16,16 +16,21 @@ interface SwipeOutput {
 const useSwipe = (input: SwipeInput): SwipeOutput => {
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
+  const [isSwiping, setIsSwiping] = useState(false);
 
   const minSwipeDistance = 100;
 
   const onTouchStart = (e: TouchEvent) => {
     setTouchEnd(0);
     setTouchStart(e.targetTouches[0].clientX);
+    setIsSwiping(true);
     e.preventDefault();
+    e.stopPropagation();
   }
 
   const onTouchMove = (e: TouchEvent) => {
+    if (!isSwiping) return;
+    
     setTouchEnd(e.targetTouches[0].clientX);
     if (input.onSwiping) {
       const currentX = e.targetTouches[0].clientX;
@@ -40,6 +45,7 @@ const useSwipe = (input: SwipeInput): SwipeOutput => {
   }
 
   const onTouchEnd = () => {
+    setIsSwiping(false);
     if (!touchStart || !touchEnd) return;
 
     const distance = touchStart - touchEnd;

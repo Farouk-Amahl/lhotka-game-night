@@ -295,6 +295,7 @@ depending if panel should close on click outside. */
   z-index: 999;
   /* inset: 0 0 0 33%; */
   inset: 0;
+  touch-action: none;
 }
 
 .slide-pane {
