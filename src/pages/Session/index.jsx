@@ -1,6 +1,5 @@
 import useSwipe from "../../utils/useSwipe";
 import GameCard from "../../components/GameCard";
-/*import { useState, useEffect, useMemo, useRef, useCallback } from "react";*/
 import { useState, useEffect, useRef, useCallback } from "react";
 import Selection from "../../components/Selection";
 import Options from "../../components/Options";
@@ -10,7 +9,8 @@ import convert from "xml-js";
 import NiceList from "../../components/NiceList";
 
 const BACKEND_URL = "https://makak.space/gamenightbackend/";
-const API_URL = "https://api.geekdo.com/xmlapi2";
+const API_URL = "https://boardgamegeek.com/xmlapi2/";
+const API_KEY = process.env.REACT_APP_BGG_API_KEY;
 const PREFIXES = ["The ", "A "];
 
 function Session({ user, setUser }) {
@@ -25,7 +25,6 @@ function Session({ user, setUser }) {
 
   const ownedGames = useRef([]);
   const infoPane = useRef(HTMLDivElement);
-  /*const currentUser = useMemo(() => sessionStorage.getItem("userName"), []);*/
   const currentUser = sessionStorage.getItem("userName");
 
   const swipeHandlers = useSwipe({
@@ -73,9 +72,11 @@ function Session({ user, setUser }) {
     if (gameOwnersList.length !== 0) {
       const fetchAllPlayersLists = async () => {
         const requests = gameOwnersList.map(async (player) => {
-          const response = await fetch(
-            `${API_URL}/collection?username=${player}`
-          );
+          const response = await fetch(`${API_URL}collection?username=${player}`, {
+            method: "GET",
+            withCredentials: true,
+            headers: { "Authorization": `Bearer ${API_KEY}` } //'Content-Type': 'application/json'
+          });
           const data = await response.text();
           const clearJson = convert.xml2js(data, { compact: true, spaces: 4 });
           return clearJson;
@@ -140,7 +141,12 @@ function Session({ user, setUser }) {
                 for (let i = 0; i < stringOfGamesIds.length; i++) {
                   const chunk = stringOfGamesIds[i];
                   chunk.join(",");
-                  const response = await fetch(`${API_URL}/thing?id=${chunk}`);
+                  const request = new Request(`${API_URL}thing?id=${chunk}`);
+                  const response = await fetch(request, {
+                    method: "GET",
+                    withCredentials: true,
+                    headers: { "Authorization": `Bearer ${API_KEY}` }
+                  });
                   const data = await response.text();
                   const clearJson = convert.xml2js(data, {
                     compact: true,
@@ -212,17 +218,22 @@ function Session({ user, setUser }) {
               (parent) =>
                 parent._attributes.id === parentGameInfo._attributes.id
             );
-            if (
-              parentGame.minplayers._attributes.value >
-              game.minplayers._attributes.value
-            ) {
-              parentGame.minplayers._attributes.value =
-                game.minplayers._attributes.value;
+            if (!parentGame) {
+              console.warn("Parent game not found for ", game);
+              return;
             }
-            parentGame.maxplayers._attributes.value =
-              game.maxplayers._attributes.value;
+              if (
+                parentGame.minplayers._attributes.value >
+                game.minplayers._attributes.value
+              ) {
+                parentGame.minplayers._attributes.value =
+                  game.minplayers._attributes.value;
+              }
+              parentGame.maxplayers._attributes.value =
+                game.maxplayers._attributes.value;
+            }
           }
-        });
+        );
         const filtered = completeListOfGames.filter(
           (game) => game._attributes.type !== "boardgameexpansion"
         );
