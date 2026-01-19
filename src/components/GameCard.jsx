@@ -1,6 +1,7 @@
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import GameSpecs from "./GameSpecs";
 import "../styles/GameCard.css";
+import { BACKEND_URL } from "../pages/Session/index.jsx"
 
 const GameCard = ({
   game,
@@ -17,7 +18,7 @@ const GameCard = ({
   const addToSelection = () => {
     // console.log(`${userName}, ${gameId}, ${gameImage}`);
     !visit &&
-      fetch("https://makak.space/gamenightbackend/?action=selection", {
+      fetch(BACKEND_URL + "?action=selection", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

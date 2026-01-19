@@ -8,7 +8,7 @@ import "../../styles/session.css";
 import convert from "xml-js";
 import NiceList from "../../components/NiceList";
 
-const BACKEND_URL = "https://makak.space/gamenightbackend/";
+export const BACKEND_URL = "https://lhotka.simplicitas.net/";
 const API_URL = "https://boardgamegeek.com/xmlapi2/";
 const API_KEY = process.env.REACT_APP_BGG_API_KEY;
 const PREFIXES = ["The ", "A "];

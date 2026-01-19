@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import "../../styles/jeux.css";
 import States from "../States";
 import { useLocation } from "react-router-dom";
+import { BACKEND_URL } from "../../pages/Session/index.jsx"
 
 function Jeu({
   titre,
@@ -18,7 +19,7 @@ function Jeu({
 
   function addToSelection() {
     !visit &&
-      fetch("https://lhotka.simplicitas.net/selection", {
+      fetch(BACKEND_URL + "selection", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

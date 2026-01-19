@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "../../styles/selection.css";
 import { useLocation } from "react-router-dom";
+import { BACKEND_URL } from "../../pages/Session/index.jsx"
 
 function Selection({ selection, updateSelection, userName }) {
   const visit = useLocation().pathname === "/visit" ? true : false;
@@ -37,7 +38,7 @@ function Selection({ selection, updateSelection, userName }) {
     if (tempArray.length === 0) {
       tempArray[0] = {
         id: 0,
-        gameImage: "https://makak.space/gamenightbackend/img/default.jpg",
+        gameImage: BACKEND_URL + "img/default.jpg",
         userName: "",
         nbrChoise: 0,
       };
@@ -46,7 +47,7 @@ function Selection({ selection, updateSelection, userName }) {
 
   function addToSelection(gameId, gameImage) {
     !visit &&
-      fetch("https://makak.space/gamenightbackend/?action=selection", {
+      fetch(BACKEND_URL + "?action=selection", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

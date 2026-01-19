@@ -1,6 +1,7 @@
 import "../../styles/login.css";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { BACKEND_URL } from "../Session/index.jsx"
 
 function Login({ setToken, user, setUser }) {
   const [name, setUserName] = useState();
@@ -22,7 +23,7 @@ function Login({ setToken, user, setUser }) {
   };
 
   async function loginUser(credentials) {
-    return fetch("https://makak.space/gamenightbackend/?action=login", {
+    return fetch(BACKEND_URL + "?action=login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
