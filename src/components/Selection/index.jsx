@@ -35,7 +35,7 @@ function Selection({ selection, updateSelection, userName }) {
     });
     setGameSelected(tempArray);
     console.log("Selection", tempArray);
-    if (tempArray.length === 1) {
+    if (tempArray.length === 0) {
       setVisibleSelection(false);
     } else {
       setVisibleSelection(true);
