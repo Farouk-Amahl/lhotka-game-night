@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "../../styles/selection.css";
 import { useLocation } from "react-router-dom";
-import { BACKEND_URL } from "../../pages/Session/index.jsx"
+import { BACKEND_URL } from "../../pages/Session/index.jsx";
 
 function Selection({ selection, updateSelection, userName }) {
   const visit = useLocation().pathname === "/visit" ? true : false;
@@ -13,7 +13,7 @@ function Selection({ selection, updateSelection, userName }) {
     selection.forEach((selectedGame) => {
       if (
         tempArray.findIndex(
-          (element) => element.gameId === selectedGame.gameId
+          (element) => element.gameId === selectedGame.gameId,
         ) === -1
       ) {
         selectedGame.nbrChoise = 1;
@@ -21,8 +21,8 @@ function Selection({ selection, updateSelection, userName }) {
       } else {
         const moreThanOne = tempArray.at(
           tempArray.findIndex(
-            (element) => element.gameId === selectedGame.gameId
-          )
+            (element) => element.gameId === selectedGame.gameId,
+          ),
         );
         moreThanOne.nbrChoise++;
         moreThanOne.userName += ", " + selectedGame.userName;
@@ -36,12 +36,9 @@ function Selection({ selection, updateSelection, userName }) {
     setGameSelected(tempArray);
     console.log("Selection", tempArray);
     if (tempArray.length === 0) {
-      tempArray[0] = {
-        id: 0,
-        gameImage: BACKEND_URL + "img/default.jpg",
-        userName: "",
-        nbrChoise: 0,
-      };
+      setVisibleSelection(false);
+    } else {
+      setVisibleSelection(true);
     }
   }, [selection]);
 
@@ -62,10 +59,10 @@ function Selection({ selection, updateSelection, userName }) {
         });
   }
 
-  function toggleVisibiltySelection() {
+  /*function toggleVisibiltySelection() {
     console.log("Dookie!");
     setVisibleSelection(!visibleSelection);
-  }
+  }*/
 
   return (
     <div
@@ -95,12 +92,6 @@ function Selection({ selection, updateSelection, userName }) {
               <span className="blocSelectionVoters">{game.userName}</span>
             </div>
           ))}
-        <div
-          onClick={() => toggleVisibiltySelection()}
-          className="blocSelectionButton"
-        >
-          Selection
-        </div>
       </div>
     </div>
   );
