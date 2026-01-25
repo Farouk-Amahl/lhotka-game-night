@@ -5,13 +5,14 @@
   position: sticky;
   top: 0;
   z-index: 9;
-  max-height: 0;
+  max-height: 500px;
   transition: all 0.5s ease 0.5s;
+  translate: 0 -100%;
 }
 
 .selectionContainer.visibleSelection {
   padding: 1em;
-  max-height: 500px;
+  translate: 0 0;
 }
 
 .selection {
@@ -21,12 +22,15 @@
   height: 100%;
 }
 
-@media screen and (max-width: 900px) {
+@media screen and (max-width: 950px) {
   .selection {
     grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
   }
-  .blocSelectionVoters {
+  .blocSelection .blocSelectionVoters {
     font-size: 0.8em;
+  }
+  .blocSelection .blocSelectionCompte {
+    scale: 0.8;
   }
 }
 
@@ -46,8 +50,15 @@
   background-color: #eef7eb;
   box-shadow: 1px 1px 5px #c8d2d2;
   position: relative;
-  overflow: hidden;
   max-width: 120px;
+  transform-origin: top;
+}
+
+.blocSelection:hover .blocSelectionVoters {
+  scale: 1 1;
+  border-radius: 0;
+  background: #fff;
+  color: inherit;
 }
 
 .blocSelectionImage {
@@ -63,6 +74,7 @@
   height: 100%;
   filter: grayscale(100%);
   position: absolute;
+  user-select: none;
 }
 
 .blocSelectionImage.select img {
@@ -72,29 +84,48 @@
 
 .blocSelectionCompte {
   position: absolute;
-  bottom: 0;
-  right: 0;
-  height: 25px;
-  width: 25px;
   display: inline;
+  background-color: #0088fe;
+  color: #fff;
+  top: -7px;
+  right: -7px;
+  height: 32px;
+  width: 32px;
+  line-height: 32px;
   text-align: center;
-  background-color: aliceblue;
   vertical-align: middle;
-  line-height: 25px;
-  border-radius: 5px;
+  border-radius: 50%;
+  font-size: 20px;
+  font-weight: bold;
+  transition: scale 0.2s ease;
+  scale: 1;
 }
 
 .blocSelectionVoters {
   position: absolute;
   top: 0;
   padding: 0.5em;
-  background-color: aliceblue;
-  display: none;
+  background-color: #0988fe;
+  color: #fff;
+  display: flex;
+  width: calc(100% - 1em);
+  scale: 0 0.5;
+  border-radius: 50%;
+  transform-origin: top right;
+  transition: all 0.2s ease;
   user-select: none;
 }
 
 .blocSelection:hover .blocSelectionVoters {
-  display: flex;
+  scale: 1 1;
+  border-radius: 0;
+  background: #fff;
+  background-color: aliceblue;
+  color: inherit;
+}
+
+.blocSelection:hover .blocSelectionCompte {
+  scale: 0;
 }
 
 .blocSelectionButton {
