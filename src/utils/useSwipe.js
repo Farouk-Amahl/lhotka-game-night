@@ -1,4 +1,5 @@
 import {TouchEvent, useState} from "react";
+const MIN_SWIPE = 100;
 
 interface SwipeInput {
   onSwipedLeft: () => void,
@@ -17,8 +18,6 @@ const useSwipe = (input: SwipeInput): SwipeOutput => {
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
   const [isSwiping, setIsSwiping] = useState(false);
-
-  const minSwipeDistance = 100;
 
   const onTouchStart = (e: TouchEvent) => {
     setTouchEnd(0);
@@ -49,13 +48,12 @@ const useSwipe = (input: SwipeInput): SwipeOutput => {
     if (!touchStart || !touchEnd) return;
 
     const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > minSwipeDistance;
-    const isRightSwipe = distance < -minSwipeDistance;
+    const isLeftSwipe = distance > MIN_SWIPE;
+    const isRightSwipe = distance < -MIN_SWIPE;
 
     if (isLeftSwipe) {
       input.onSwipedLeft();
-    }
-    if (isRightSwipe) {
+    } else if (isRightSwipe) {
       input.onSwipedRight();
     } else if (input.onSwipeEnd) {
       input.onSwipeEnd();

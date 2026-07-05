@@ -49,7 +49,7 @@ const GameCard = ({
       }`}
     >
       <div className={`gameImageBlock`} onClick={() => addToSelection()}>
-        <img src={game.thumbnail._text} alt={game.title} />
+        <img src={game.thumbnail._text} alt={title} />
       </div>
       <div className="gameInfosBlock" onClick={() => showPane(index)}>
         <div className="gameTitle">{title}</div>

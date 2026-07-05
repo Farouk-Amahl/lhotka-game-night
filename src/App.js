@@ -12,7 +12,7 @@ import './App.css';
 
 function App() {
   const { token, setToken } = useToken();
-  const { user, setUser } = useState({});
+  const [ user, setUser ] = useState({});
 
   return (
     <React.StrictMode>

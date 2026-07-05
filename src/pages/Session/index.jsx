@@ -27,6 +27,7 @@ function Session({ user, setUser }) {
 
   const ownedGames = useRef([]);
   const infoPane = useRef(HTMLDivElement);
+  const paneTimeout = useRef(null);
   const currentUser = sessionStorage.getItem("userName");
   const cacheLoadAttempted = useRef(false);
   const isUpdatingCache = useRef(false);
@@ -496,7 +497,7 @@ function Session({ user, setUser }) {
         addOwnersToGames(completeListOfGames, ownedGames.current);
         completeListOfGames.forEach((game) => {
           if (game._attributes.type === "boardgameexpansion") {
-            const infos = game.link;
+            const infos = Array.isArray(game.link) ? game.link : game.link ? [game.link] : [];
             const parentGameInfo = infos.find(
               (info) => info._attributes.inbound === "true"
             );
@@ -515,8 +516,13 @@ function Session({ user, setUser }) {
                 parentGame.minplayers._attributes.value =
                   game.minplayers._attributes.value;
               }
-              parentGame.maxplayers._attributes.value =
-                game.maxplayers._attributes.value;
+              if (
+                parentGame.maxplayers._attributes.value <
+                game.maxplayers._attributes.value
+              ) {
+                parentGame.maxplayers._attributes.value =
+                  game.maxplayers._attributes.value;
+              }
             }
           }
         );
@@ -604,8 +610,11 @@ function Session({ user, setUser }) {
   const closePane = () => {
     infoPane.current.style.transition = "transform 200ms ease-out";
     infoPane.current.style.transform = `translateX(100%)`;
-    setTimeout(() => setGameWithInfo({}), 400);
+    clearTimeout(paneTimeout.current);
+    paneTimeout.current = setTimeout(() => setGameWithInfo({}), 400);
   };
+
+  useEffect(() => () => clearTimeout(paneTimeout.current), []);
 
   const firstInList = (elem, pathToValue) => {
     const pathArray = pathToValue.split(".");
