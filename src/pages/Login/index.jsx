@@ -23,13 +23,19 @@ function Login({ setToken, user, setUser }) {
   };
 
   async function loginUser(credentials) {
-    return fetch(BACKEND_URL + "?action=login", {
+    const response = await fetch(BACKEND_URL + "?action=login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(credentials),
-    }).then((data) => data.json());
+    });
+    if (!response.ok) {
+      const text = await response.text();
+      console.error("Login server error:", response.status, text);
+      return { error: `Server error ${response.status}` };
+    }
+    return response.json();
   }
 
   return (
