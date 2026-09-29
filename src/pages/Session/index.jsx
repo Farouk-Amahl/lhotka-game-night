@@ -52,7 +52,7 @@ function Session({ user, setUser }) {
 
   const sortByTitles = useCallback(
     (list) => list.sort((a, b) => cleanTitle(a).localeCompare(cleanTitle(b))),
-    []
+    [],
   );
 
   // Helper function to check if cache is fresh
@@ -130,15 +130,26 @@ function Session({ user, setUser }) {
   // Helper function to check if we should fetch in background
   const shouldFetchInBackground = useCallback(() => {
     // If cache is loaded and fresh, don't fetch
-    if (cacheMetadata && completeListOfGames.length > 0 && isCacheFresh(cacheMetadata.timestamp)) {
+    if (
+      cacheMetadata &&
+      completeListOfGames.length > 0 &&
+      isCacheFresh(cacheMetadata.timestamp)
+    ) {
       return false;
     }
     // If cache is loaded but stale, fetch in background
-    if (cacheMetadata && completeListOfGames.length > 0 && !isCacheFresh(cacheMetadata.timestamp)) {
+    if (
+      cacheMetadata &&
+      completeListOfGames.length > 0 &&
+      !isCacheFresh(cacheMetadata.timestamp)
+    ) {
       return true;
     }
     // If no cache at all (cache load attempted but no cache found), fetch
-    if (cacheLoadAttempted.current && (!cacheMetadata || !completeListOfGames.length)) {
+    if (
+      cacheLoadAttempted.current &&
+      (!cacheMetadata || !completeListOfGames.length)
+    ) {
       return true;
     }
     return false;
@@ -152,12 +163,19 @@ function Session({ user, setUser }) {
       try {
         const rawResponse = await fetch(BACKEND_URL + "?action=cached");
         const content = await rawResponse.json();
-        if (content && content.timestamp && content.gamesOwnedHash && content.data) {
+        if (
+          content &&
+          content.timestamp &&
+          content.gamesOwnedHash &&
+          content.data
+        ) {
           setCacheMetadata({
             timestamp: content.timestamp,
-            gamesOwnedHash: content.gamesOwnedHash
+            gamesOwnedHash: content.gamesOwnedHash,
           });
-          setCompleteListOfGames(Array.isArray(content.data) ? content.data : []);
+          setCompleteListOfGames(
+            Array.isArray(content.data) ? content.data : [],
+          );
         } else {
           // No cache or invalid format
           setCacheMetadata(null);
@@ -204,43 +222,56 @@ function Session({ user, setUser }) {
     console.log("Cache is stale or missing, fetching in background...");
     const fetchAllPlayersLists = async () => {
       const requests = gameOwnersList.map(async (player) => {
-          try {
-            const response = await fetch(`${API_URL}collection?username=${player}`, {
+        try {
+          const response = await fetch(
+            `${API_URL}collection?username=${player}`,
+            {
               method: "GET",
               withCredentials: true,
-              headers: { "Authorization": `Bearer ${API_KEY}` }
-            });
-            if (!response.ok) {
-              console.error(`HTTP error ${response.status} for player ${player}`);
-              return null;
-            }
-            const data = await response.text();
-            const clearJson = convert.xml2js(data, { compact: true, spaces: 2 });
-            return clearJson;
-          } catch (error) {
-            console.error(`Error fetching collection for player ${player}:`, error);
+              headers: { Authorization: `Bearer ${API_KEY}` },
+            },
+          );
+          if (!response.ok) {
+            console.error(`HTTP error ${response.status} for player ${player}`);
             return null;
           }
+          const data = await response.text();
+          const clearJson = convert.xml2js(data, { compact: true, spaces: 2 });
+          return clearJson;
+        } catch (error) {
+          console.error(
+            `Error fetching collection for player ${player}:`,
+            error,
+          );
+          return null;
+        }
       });
 
       try {
         const responses = await Promise.all(requests);
         const namesAndGames = [];
         let allSuccessful = true;
-        
+
         responses.forEach((playerList, index) => {
           if (!playerList) {
             allSuccessful = false;
             return;
           }
-          if (playerList.items !== undefined && playerList.items.item !== undefined) {
+          if (
+            playerList.items !== undefined &&
+            playerList.items.item !== undefined
+          ) {
             const items = normalizeItems(playerList.items);
-            
+
             items.forEach((game) => {
               game._attributes.owner = gameOwnersList[index];
             });
             const onlyOwned = items.filter((game) => {
-              return game.status && game.status._attributes && game.status._attributes.own === "1";
+              return (
+                game.status &&
+                game.status._attributes &&
+                game.status._attributes.own === "1"
+              );
             });
             namesAndGames.push(onlyOwned);
           } else {
@@ -261,7 +292,13 @@ function Session({ user, setUser }) {
       }
     };
     fetchAllPlayersLists();
-  }, [gameOwnersList, cacheMetadata, completeListOfGames, shouldFetchInBackground, normalizeItems]);
+  }, [
+    gameOwnersList,
+    cacheMetadata,
+    completeListOfGames,
+    shouldFetchInBackground,
+    normalizeItems,
+  ]);
 
   // Handle cache usage - always use cache first (even if stale)
   useEffect(() => {
@@ -287,11 +324,15 @@ function Session({ user, setUser }) {
 
     // Don't fetch if cache is fresh and has the data we need
     const currentGamesOwnedHash = generateGamesOwnedHash(gamesOwned);
-    if (cacheMetadata && 
-        cacheMetadata.gamesOwnedHash === currentGamesOwnedHash &&
-        completeListOfGames.length > 0 &&
-        isCacheFresh(cacheMetadata.timestamp)) {
-      console.log("Cache is fresh and has this data, skipping game details fetch");
+    if (
+      cacheMetadata &&
+      cacheMetadata.gamesOwnedHash === currentGamesOwnedHash &&
+      completeListOfGames.length > 0 &&
+      isCacheFresh(cacheMetadata.timestamp)
+    ) {
+      console.log(
+        "Cache is fresh and has this data, skipping game details fetch",
+      );
       ownedGames.current = gamesOwned;
       if (currentGamesOwnedHash) {
         localStorage.setItem("gamesOwned", currentGamesOwnedHash);
@@ -301,191 +342,216 @@ function Session({ user, setUser }) {
 
     ownedGames.current = gamesOwned;
     const fetchMoreCompleteListOfGames = async () => {
-        // Check if cache already has this data (even if stale, we might not need to fetch)
-        if (cacheMetadata && 
-            cacheMetadata.gamesOwnedHash === currentGamesOwnedHash &&
-            completeListOfGames.length > 0) {
-          console.log("Cache already has this data, skipping fetch");
-          if (currentGamesOwnedHash) {
-            localStorage.setItem("gamesOwned", currentGamesOwnedHash);
-          }
-          return;
+      // Check if cache already has this data (even if stale, we might not need to fetch)
+      if (
+        cacheMetadata &&
+        cacheMetadata.gamesOwnedHash === currentGamesOwnedHash &&
+        completeListOfGames.length > 0
+      ) {
+        console.log("Cache already has this data, skipping fetch");
+        if (currentGamesOwnedHash) {
+          localStorage.setItem("gamesOwned", currentGamesOwnedHash);
         }
+        return;
+      }
 
-        // Fetch from BGG in background (cache is stale or missing)
-        console.log("Fetching game details in background to update cache...");
-        let stringOfGamesIds = [];
-        gamesOwned.forEach((playerGamesList) => {
-          playerGamesList.forEach((game) => {
-            stringOfGamesIds.push(game._attributes.objectid);
-          });
+      // Fetch from BGG in background (cache is stale or missing)
+      console.log("Fetching game details in background to update cache...");
+      let stringOfGamesIds = [];
+      gamesOwned.forEach((playerGamesList) => {
+        playerGamesList.forEach((game) => {
+          stringOfGamesIds.push(game._attributes.objectid);
         });
-        // to make sure that the list is always the same
-        stringOfGamesIds.sort((a, b) => a - b);
-        stringOfGamesIds = [...new Set(stringOfGamesIds)];
-        
-        // Store the expected number of games before chunking
-        const expectedGameCount = stringOfGamesIds.length;
-        
-        if (stringOfGamesIds.length > 0) {
-          let chunks = [];
-          const chunkSize = 20;
-          const numChunks = Math.ceil(stringOfGamesIds.length / chunkSize);
-          for (let i = 0; i < numChunks; i++) {
-            chunks[i] = stringOfGamesIds.slice(i * chunkSize, i * chunkSize + chunkSize);
-          }
-          stringOfGamesIds = chunks;
-          chunks = [];
-          try {
-            let fetchSuccess = true;
-            
-            for (let i = 0; i < stringOfGamesIds.length; i++) {
-              const chunk = stringOfGamesIds[i];
-              const chunkString = chunk.join(",");
-              const request = new Request(`${API_URL}thing?id=${chunkString}`);
-              
-              try {
-                const response = await fetch(request, {
-                  method: "GET",
-                  withCredentials: true,
-                  headers: { "Authorization": `Bearer ${API_KEY}` }
-                });
-                
-                // Check for HTTP errors (429, 500, etc.)
-                if (!response.ok) {
-                  console.error(`HTTP error ${response.status} for chunk ${i + 1}/${stringOfGamesIds.length}`);
-                  if (response.status === 429) {
-                    console.error("Rate limit exceeded (429). Stopping fetch to preserve cache.");
-                    fetchSuccess = false;
-                    break; // Stop fetching to avoid more rate limit issues
-                  }
-                  fetchSuccess = false;
-                  continue; // Skip this chunk but continue with others
-                }
-                
-                const data = await response.text();
-                const clearJson = convert.xml2js(data, {
-                  compact: true,
-                  spaces: 2,
-                });
-                const items = normalizeItems(clearJson.items);
-                chunks = chunks.concat(items);
-              } catch (chunkError) {
-                console.error(`Error fetching chunk ${i + 1}/${stringOfGamesIds.length}:`, chunkError);
-                fetchSuccess = false;
-                // Continue with other chunks, but mark as incomplete
-              }
-            }
+      });
+      // to make sure that the list is always the same
+      stringOfGamesIds.sort((a, b) => a - b);
+      stringOfGamesIds = [...new Set(stringOfGamesIds)];
 
-            // Only write to cache if we successfully fetched all chunks
-            // Verify we got data for all expected games
-            const actualGameCount = chunks.length;
-            const isComplete = fetchSuccess && actualGameCount >= expectedGameCount * 0.9; // Allow 10% tolerance for edge cases
-            
-            if (isComplete) {
-              // Add owners to chunks before saving to cache
-              addOwnersToGames(chunks, ownedGames.current);
-              
-              // Update cache with metadata
-              const cachePayload = {
-                timestamp: new Date().toISOString(),
-                gamesOwnedHash: currentGamesOwnedHash,
-                data: chunks
-              };
+      // Store the expected number of games before chunking
+      const expectedGameCount = stringOfGamesIds.length;
 
-              // Before writing cache, verify it hasn't been updated by another session
-              const verifyCache = async () => {
-                try {
-                  const checkResponse = await fetch(BACKEND_URL + "?action=cached");
-                  const existingCache = await checkResponse.json();
-                  
-                  if (existingCache && existingCache.timestamp) {
-                    const existingTime = new Date(existingCache.timestamp).getTime();
-                    const newTime = new Date(cachePayload.timestamp).getTime();
-                    
-                    // If existing cache is newer, don't overwrite
-                    if (existingTime > newTime) {
-                      console.log("Cache was updated by another session, skipping write");
-                      return false;
-                    }
-                    
-                    // If existing cache is fresh and we had errors, don't overwrite with incomplete data
-                    if (!fetchSuccess && isCacheFresh(existingCache.timestamp)) {
-                      console.log("Fetch incomplete but existing cache is fresh, preserving it");
-                      return false;
-                    }
-                  }
-                  return true;
-                } catch (error) {
-                  console.error("Error verifying cache:", error);
-                  // If we had fetch errors, don't overwrite existing cache
-                  return fetchSuccess;
-                }
-              };
+      if (stringOfGamesIds.length > 0) {
+        let chunks = [];
+        const chunkSize = 20;
+        const numChunks = Math.ceil(stringOfGamesIds.length / chunkSize);
+        for (let i = 0; i < numChunks; i++) {
+          chunks[i] = stringOfGamesIds.slice(
+            i * chunkSize,
+            i * chunkSize + chunkSize,
+          );
+        }
+        stringOfGamesIds = chunks;
+        chunks = [];
+        try {
+          let fetchSuccess = true;
 
-              const shouldWrite = await verifyCache();
-              if (shouldWrite) {
-                isUpdatingCache.current = true; // Mark that we're updating cache
-                try {
-                  const rawResponse = await fetch(
-                    BACKEND_URL + "?action=cache",
-                    {
-                      method: "POST",
-                      headers: {
-                        Accept: "application/json",
-                        "Content-Type": "application/json",
-                      },
-                      body: JSON.stringify(cachePayload),
-                    }
+          for (let i = 0; i < stringOfGamesIds.length; i++) {
+            const chunk = stringOfGamesIds[i];
+            const chunkString = chunk.join(",");
+            const request = new Request(`${API_URL}thing?id=${chunkString}`);
+
+            try {
+              const response = await fetch(request, {
+                method: "GET",
+                withCredentials: true,
+                headers: { Authorization: `Bearer ${API_KEY}` },
+              });
+
+              // Check for HTTP errors (429, 500, etc.)
+              if (!response.ok) {
+                console.error(
+                  `HTTP error ${response.status} for chunk ${i + 1}/${stringOfGamesIds.length}`,
+                );
+                if (response.status === 429) {
+                  console.error(
+                    "Rate limit exceeded (429). Stopping fetch to preserve cache.",
                   );
-                  const content = await rawResponse.json();
-                  
-                  // Only update display and metadata if cache write was successful
-                  if (content && !content.error) {
-                    console.log("Cache updated successfully, updating display");
-                    setCompleteListOfGames(chunks);
-                    setCacheMetadata({
-                      timestamp: cachePayload.timestamp,
-                      gamesOwnedHash: currentGamesOwnedHash
-                    });
-                    if (currentGamesOwnedHash) {
-                      localStorage.setItem("gamesOwned", currentGamesOwnedHash);
-                    }
-                    // Clear the flag after a short delay to allow useEffect to settle
-                    setTimeout(() => {
-                      isUpdatingCache.current = false;
-                    }, 1000);
-                  } else {
-                    console.warn("Cache write failed, preserving existing cache");
-                    isUpdatingCache.current = false;
-                    // Keep using existing cache
+                  fetchSuccess = false;
+                  break; // Stop fetching to avoid more rate limit issues
+                }
+                fetchSuccess = false;
+                continue; // Skip this chunk but continue with others
+              }
+
+              const data = await response.text();
+              const clearJson = convert.xml2js(data, {
+                compact: true,
+                spaces: 2,
+              });
+              const items = normalizeItems(clearJson.items);
+              chunks = chunks.concat(items);
+            } catch (chunkError) {
+              console.error(
+                `Error fetching chunk ${i + 1}/${stringOfGamesIds.length}:`,
+                chunkError,
+              );
+              fetchSuccess = false;
+              // Continue with other chunks, but mark as incomplete
+            }
+          }
+
+          // Only write to cache if we successfully fetched all chunks
+          // Verify we got data for all expected games
+          const actualGameCount = chunks.length;
+          const isComplete =
+            fetchSuccess && actualGameCount >= expectedGameCount * 0.9; // Allow 10% tolerance for edge cases
+
+          if (isComplete) {
+            // Add owners to chunks before saving to cache
+            addOwnersToGames(chunks, ownedGames.current);
+
+            // Update cache with metadata
+            const cachePayload = {
+              timestamp: new Date().toISOString(),
+              gamesOwnedHash: currentGamesOwnedHash,
+              data: chunks,
+            };
+
+            // Before writing cache, verify it hasn't been updated by another session
+            const verifyCache = async () => {
+              try {
+                const checkResponse = await fetch(
+                  BACKEND_URL + "?action=cached",
+                );
+                const existingCache = await checkResponse.json();
+
+                if (existingCache && existingCache.timestamp) {
+                  const existingTime = new Date(
+                    existingCache.timestamp,
+                  ).getTime();
+                  const newTime = new Date(cachePayload.timestamp).getTime();
+
+                  // If existing cache is newer, don't overwrite
+                  if (existingTime > newTime) {
+                    console.log(
+                      "Cache was updated by another session, skipping write",
+                    );
+                    return false;
                   }
-                } catch (writeError) {
-                  console.error("Error writing to cache:", writeError);
+
+                  // If existing cache is fresh and we had errors, don't overwrite with incomplete data
+                  if (!fetchSuccess && isCacheFresh(existingCache.timestamp)) {
+                    console.log(
+                      "Fetch incomplete but existing cache is fresh, preserving it",
+                    );
+                    return false;
+                  }
+                }
+                return true;
+              } catch (error) {
+                console.error("Error verifying cache:", error);
+                // If we had fetch errors, don't overwrite existing cache
+                return fetchSuccess;
+              }
+            };
+
+            const shouldWrite = await verifyCache();
+            if (shouldWrite) {
+              isUpdatingCache.current = true; // Mark that we're updating cache
+              try {
+                const rawResponse = await fetch(BACKEND_URL + "?action=cache", {
+                  method: "POST",
+                  headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify(cachePayload),
+                });
+                const content = await rawResponse.json();
+
+                // Only update display and metadata if cache write was successful
+                if (content && !content.error) {
+                  console.log("Cache updated successfully, updating display");
+                  setCompleteListOfGames(chunks);
+                  setCacheMetadata({
+                    timestamp: cachePayload.timestamp,
+                    gamesOwnedHash: currentGamesOwnedHash,
+                  });
+                  if (currentGamesOwnedHash) {
+                    localStorage.setItem("gamesOwned", currentGamesOwnedHash);
+                  }
+                  // Clear the flag after a short delay to allow useEffect to settle
+                  setTimeout(() => {
+                    isUpdatingCache.current = false;
+                  }, 1000);
+                } else {
+                  console.warn("Cache write failed, preserving existing cache");
                   isUpdatingCache.current = false;
                   // Keep using existing cache
                 }
-              } else {
-                console.log("Skipping cache write - preserving existing cache");
-                // Keep using existing cache, don't update display
+              } catch (writeError) {
+                console.error("Error writing to cache:", writeError);
+                isUpdatingCache.current = false;
+                // Keep using existing cache
               }
             } else {
-              console.warn(`Fetch incomplete: got ${actualGameCount} games, expected ~${expectedGameCount}. Not updating cache or display.`);
-              // Don't overwrite cache or display with incomplete data
-              // Keep using existing cache
+              console.log("Skipping cache write - preserving existing cache");
+              // Keep using existing cache, don't update display
             }
-          } catch (error) {
-            console.error(
-              "Error fetching full list of games:",
-              error
+          } else {
+            console.warn(
+              `Fetch incomplete: got ${actualGameCount} games, expected ~${expectedGameCount}. Not updating cache or display.`,
             );
-            // On error, preserve existing cache - don't update anything
-            console.log("Error occurred, preserving existing cache and display");
+            // Don't overwrite cache or display with incomplete data
+            // Keep using existing cache
           }
+        } catch (error) {
+          console.error("Error fetching full list of games:", error);
+          // On error, preserve existing cache - don't update anything
+          console.log("Error occurred, preserving existing cache and display");
         }
+      }
     };
     fetchMoreCompleteListOfGames();
-  }, [gamesOwned, cacheMetadata, completeListOfGames, isCacheFresh, generateGamesOwnedHash, normalizeItems, addOwnersToGames]);
+  }, [
+    gamesOwned,
+    cacheMetadata,
+    completeListOfGames,
+    isCacheFresh,
+    generateGamesOwnedHash,
+    normalizeItems,
+    addOwnersToGames,
+  ]);
 
   // cleaning the final list threw filters
   useEffect(() => {
@@ -497,37 +563,52 @@ function Session({ user, setUser }) {
         addOwnersToGames(completeListOfGames, ownedGames.current);
         completeListOfGames.forEach((game) => {
           if (game._attributes.type === "boardgameexpansion") {
-            const infos = Array.isArray(game.link) ? game.link : game.link ? [game.link] : [];
+            const infos = Array.isArray(game.link)
+              ? game.link
+              : game.link
+                ? [game.link]
+                : [];
             const parentGameInfo = infos.find(
-              (info) => info._attributes.inbound === "true"
+              (info) => info._attributes.inbound === "true",
             );
+            if (
+              game.minplayers._attributes.value ===
+              game.maxplayers._attributes.value
+            ) {
+              if (game.minplayers._attributes.value === 1) {
+                game.specialSort = "solo";
+              } else if (game.minplayers._attributes.value === 2) {
+                game.specialSort = "duo";
+              } else {
+                game.specialSort = "more";
+              }
+            }
             const parentGame = completeListOfGames.find(
               (parent) =>
-                parent._attributes.id === parentGameInfo._attributes.id
+                parent._attributes.id === parentGameInfo._attributes.id,
             );
             if (!parentGame) {
               console.warn("Parent game not found for ", game);
               return;
             }
-              if (
-                parentGame.minplayers._attributes.value >
-                game.minplayers._attributes.value
-              ) {
-                parentGame.minplayers._attributes.value =
-                  game.minplayers._attributes.value;
-              }
-              if (
-                parentGame.maxplayers._attributes.value <
-                game.maxplayers._attributes.value
-              ) {
-                parentGame.maxplayers._attributes.value =
-                  game.maxplayers._attributes.value;
-              }
+            if (
+              parentGame.minplayers._attributes.value >
+              game.minplayers._attributes.value
+            ) {
+              parentGame.minplayers._attributes.value =
+                game.minplayers._attributes.value;
+            }
+            if (
+              parentGame.maxplayers._attributes.value <
+              game.maxplayers._attributes.value
+            ) {
+              parentGame.maxplayers._attributes.value =
+                game.maxplayers._attributes.value;
             }
           }
-        );
+        });
         const filtered = completeListOfGames.filter(
-          (game) => game._attributes.type !== "boardgameexpansion"
+          (game) => game._attributes.type !== "boardgameexpansion",
         );
         sortByTitles(filtered);
         setDisplayedListOfGames(filtered);
@@ -555,7 +636,7 @@ function Session({ user, setUser }) {
     (sort) => {
       let sorted = [];
       const list = [...completeListOfGames].filter(
-        (game) => game._attributes.type !== "boardgameexpansion"
+        (game) => game._attributes.type !== "boardgameexpansion",
       );
 
       switch (sort) {
@@ -563,7 +644,9 @@ function Session({ user, setUser }) {
           soloGameClicked
             ? (sorted = list)
             : (sorted = list.filter(
-                (game) => game.minplayers._attributes.value * 1 === 1
+                (game) =>
+                  game["poll-summary"].result[0]._attributes.value ===
+                  "Best with 1 players",
               ));
           break;
         case "two players":
@@ -571,8 +654,8 @@ function Session({ user, setUser }) {
             ? (sorted = list)
             : (sorted = list.filter(
                 (game) =>
-                  game.minplayers._attributes.value * 1 <= 2 &&
-                  game.maxplayers._attributes.value * 1 >= 2
+                  game.minplayers._attributes.value * 1 === 2 &&
+                  game.maxplayers._attributes.value * 1 === 2,
               ));
           break;
         case "number":
@@ -580,7 +663,7 @@ function Session({ user, setUser }) {
         case "":
         default:
           sorted = list.filter(
-            (game) => game.maxplayers._attributes.value * 1 >= sort
+            (game) => game.maxplayers._attributes.value * 1 >= sort,
           );
       }
       sortByTitles(sorted);
@@ -588,7 +671,7 @@ function Session({ user, setUser }) {
       twoPlayersClicked && setTwoPlayersClicked(false);
       soloGameClicked && setSoloGameClicked(false);
     },
-    [completeListOfGames, soloGameClicked, sortByTitles, twoPlayersClicked]
+    [completeListOfGames, soloGameClicked, sortByTitles, twoPlayersClicked],
   );
 
   const cleanTitle = (x) => {
@@ -620,7 +703,7 @@ function Session({ user, setUser }) {
     const pathArray = pathToValue.split(".");
     return pathArray.reduce(
       (acc, curr) => acc && acc[curr],
-      elem[0] ? elem[0] : elem
+      elem[0] ? elem[0] : elem,
     );
   };
 
@@ -692,11 +775,12 @@ function Session({ user, setUser }) {
             <h2 className="slide-pane__title">
               {htmlDecode(
                 gameWithInfo.name &&
-                  firstInList(gameWithInfo.name, "_attributes.value")
+                  firstInList(gameWithInfo.name, "_attributes.value"),
               )}
             </h2>
             <h3 className="slide-pane__title">
-              {gameWithInfo._attributes.owners && gameWithInfo._attributes.owners.length > 0
+              {gameWithInfo._attributes.owners &&
+              gameWithInfo._attributes.owners.length > 0
                 ? `by ${gameWithInfo._attributes.owners.join(", ")}`
                 : ""}
             </h3>
